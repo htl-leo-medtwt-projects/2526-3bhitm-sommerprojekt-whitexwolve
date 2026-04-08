@@ -1,0 +1,528 @@
+:root{
+  --seitenhintergrund:#f3f4f6;
+  --kartenhintergrund:#ffffff;
+  --kartenhintergrund-zart:#f8f9fb;
+  --linienfarbe:#d7dbe1;
+  --textfarbe:#16181c;
+  --textfarbe-zurueckhaltend:#5f6672;
+  --aktionsfarbe:#0d4fd6;
+  --aktionsfarbe-hover:#0a43b7;
+  --kopfzeilenfarbe:#0f1217;
+  --maximale-breite:1240px;
+  --radius-gross:22px;
+  --radius-mittel:16px;
+  --radius-klein:12px;
+  --weicher-schatten:0 10px 24px rgba(18, 24, 33, 0.06);
+}
+
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html{
+  scroll-behavior:smooth;
+}
+
+body{
+  min-height:100vh;
+  font-family:Inter, "Segoe UI", Arial, sans-serif;
+  background:var(--seitenhintergrund);
+  color:var(--textfarbe);
+  line-height:1.55;
+}
+
+a{
+  color:inherit;
+  text-decoration:none;
+}
+
+button,
+input,
+select{
+  font:inherit;
+}
+
+.seitenbreite{
+  width:min(94%, var(--maximale-breite));
+  margin-inline:auto;
+}
+
+.seitenkopf{
+  position:sticky;
+  top:0;
+  z-index:100;
+  background:#ffffffee;
+  backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--linienfarbe);
+}
+
+.seitenkopf__leiste{
+  min-height:78px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:24px;
+}
+
+.markenname{
+  font-size:1.4rem;
+  font-weight:900;
+  letter-spacing:-0.03em;
+  color:var(--kopfzeilenfarbe);
+}
+
+.hauptnavigation{
+  display:flex;
+  align-items:center;
+  gap:20px;
+  flex-wrap:wrap;
+}
+
+.hauptnavigation__link{
+  color:var(--textfarbe-zurueckhaltend);
+  font-weight:600;
+  font-size:0.96rem;
+}
+
+.hauptnavigation__link:hover{
+  color:var(--textfarbe);
+}
+
+.startbereich{
+  padding:40px 0 28px;
+  background:#eef1f4;
+  border-bottom:1px solid var(--linienfarbe);
+}
+
+.startbereich__inhalt{
+  display:grid;
+  grid-template-columns:1.45fr 0.75fr;
+  gap:24px;
+  align-items:start;
+  margin-bottom:24px;
+}
+
+.startbereich__hinweis{
+  display:inline-block;
+  font-size:0.84rem;
+  font-weight:700;
+  letter-spacing:0.05em;
+  text-transform:uppercase;
+  color:var(--textfarbe-zurueckhaltend);
+  margin-bottom:14px;
+}
+
+.startbereich__titel{
+  font-size:clamp(2.3rem, 5vw, 4.8rem);
+  line-height:0.98;
+  letter-spacing:-0.05em;
+  max-width:11ch;
+  margin-bottom:16px;
+}
+
+.startbereich__beschreibung{
+  max-width:62ch;
+  color:var(--textfarbe-zurueckhaltend);
+  font-size:1.04rem;
+}
+
+.veranstaltungsort_karte{
+  background:#181c22;
+  color:#f2f4f7;
+  border-radius:var(--radius-gross);
+  padding:24px;
+  box-shadow:var(--weicher-schatten);
+}
+
+.veranstaltungsort_karte__label{
+  display:block;
+  color:#aeb7c3;
+  font-size:0.78rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:0.06em;
+  margin-bottom:10px;
+}
+
+.veranstaltungsort_karte__titel{
+  font-size:1.7rem;
+  line-height:1.08;
+  margin-bottom:12px;
+}
+
+.veranstaltungsort_karte__text{
+  color:#d2d8e1;
+}
+
+.suchbereich{
+  background:var(--kartenhintergrund);
+  border:1px solid var(--linienfarbe);
+  border-radius:28px;
+  padding:28px;
+  box-shadow:var(--weicher-schatten);
+}
+
+.suchbereich__kopf{
+  display:grid;
+  grid-template-columns:1.2fr 0.8fr;
+  gap:20px;
+  align-items:end;
+  margin-bottom:22px;
+}
+
+.suchbereich__untertitel{
+  font-size:0.84rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  color:var(--textfarbe-zurueckhaltend);
+  margin-bottom:8px;
+}
+
+.suchbereich__titel{
+  font-size:clamp(1.7rem, 3vw, 2.5rem);
+  line-height:1.04;
+  letter-spacing:-0.04em;
+}
+
+.suchbereich__info{
+  color:var(--textfarbe-zurueckhaltend);
+  max-width:54ch;
+}
+
+.suchformular{
+  display:grid;
+  grid-template-columns:2.2fr 1fr 1fr auto;
+  gap:14px;
+  align-items:end;
+}
+
+.suchformular__feldgruppe{
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+}
+
+.suchformular__feldgruppe--gross{
+  min-width:0;
+}
+
+.suchformular__label{
+  font-size:0.82rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  color:var(--textfarbe-zurueckhaltend);
+}
+
+.suchformular__eingabe,
+.suchformular__auswahl,
+.suchformular__festwert{
+  width:100%;
+  min-height:58px;
+  border:1px solid var(--linienfarbe);
+  background:var(--kartenhintergrund-zart);
+  border-radius:14px;
+  padding:0 16px;
+  color:var(--textfarbe);
+}
+
+.suchformular__eingabe:focus,
+.suchformular__auswahl:focus{
+  outline:none;
+  border-color:#8a9bb6;
+  background:#ffffff;
+}
+
+.suchformular__festwert{
+  display:flex;
+  align-items:center;
+  font-weight:700;
+}
+
+.suchformular__aktionen{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.schaltflaeche{
+  min-height:58px;
+  padding:0 20px;
+  border-radius:14px;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  font-weight:800;
+  transition:0.18s ease;
+  border:1px solid transparent;
+  cursor:pointer;
+}
+
+.schaltflaeche:hover{
+  transform:translateY(-1px);
+}
+
+.schaltflaeche--primaer{
+  background:var(--aktionsfarbe);
+  color:#ffffff;
+}
+
+.schaltflaeche--primaer:hover{
+  background:var(--aktionsfarbe-hover);
+}
+
+.schaltflaeche--sekundaer{
+  background:#ffffff;
+  color:var(--textfarbe);
+  border-color:var(--linienfarbe);
+}
+
+.eventuebersicht{
+  padding:36px 0;
+}
+
+.bereichskopf{
+  display:flex;
+  justify-content:space-between;
+  align-items:end;
+  gap:18px;
+  flex-wrap:wrap;
+  margin-bottom:20px;
+}
+
+.bereichskopf__untertitel{
+  font-size:0.84rem;
+  font-weight:800;
+  text-transform:uppercase;
+  letter-spacing:0.05em;
+  color:var(--textfarbe-zurueckhaltend);
+  margin-bottom:8px;
+}
+
+.bereichskopf__titel{
+  font-size:clamp(1.6rem, 3vw, 2.4rem);
+  letter-spacing:-0.04em;
+  line-height:1.04;
+}
+
+.bereichskopf__ergebniszahl{
+  color:var(--textfarbe-zurueckhaltend);
+  font-weight:600;
+}
+
+.eventuebersicht__raster{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:18px;
+}
+
+.veranstaltungskarte{
+  background:var(--kartenhintergrund);
+  border:1px solid var(--linienfarbe);
+  border-radius:22px;
+  overflow:hidden;
+  box-shadow:var(--weicher-schatten);
+}
+
+.veranstaltungskarte__bildbereich{
+  min-height:210px;
+  padding:18px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  color:#ffffff;
+}
+
+.veranstaltungskarte__bildbereich--nachtblau{
+  background:linear-gradient(180deg, #1a2a45 0%, #0d1524 100%);
+}
+
+.veranstaltungskarte__bildbereich--bordeaux{
+  background:linear-gradient(180deg, #5f1f2e 0%, #241216 100%);
+}
+
+.veranstaltungskarte__bildbereich--dunkelgrau{
+  background:linear-gradient(180deg, #3d434d 0%, #181b20 100%);
+}
+
+.veranstaltungskarte__bildbereich--oliv{
+  background:linear-gradient(180deg, #5d6240 0%, #202317 100%);
+}
+
+.veranstaltungskarte__kategorie{
+  align-self:flex-start;
+  background:rgba(255,255,255,0.12);
+  border:1px solid rgba(255,255,255,0.14);
+  border-radius:999px;
+  padding:8px 12px;
+  font-size:0.82rem;
+  font-weight:700;
+}
+
+.veranstaltungskarte__titel{
+  font-size:1.55rem;
+  line-height:1.02;
+  letter-spacing:-0.04em;
+  max-width:12ch;
+}
+
+.veranstaltungskarte__inhalt{
+  padding:18px;
+}
+
+.veranstaltungskarte__beschreibung{
+  color:var(--textfarbe-zurueckhaltend);
+  margin-bottom:14px;
+}
+
+.veranstaltungskarte__meta{
+  display:flex;
+  gap:14px;
+  flex-wrap:wrap;
+  color:var(--textfarbe-zurueckhaltend);
+  font-size:0.94rem;
+  margin-bottom:14px;
+}
+
+.vorstellungszeiten{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+  margin-bottom:16px;
+}
+
+.vorstellungszeiten__eintrag{
+  min-height:40px;
+  padding:0 12px;
+  display:inline-flex;
+  align-items:center;
+  border-radius:999px;
+  background:#f5f6f8;
+  border:1px solid #e1e5ea;
+  color:#2d3440;
+  font-size:0.9rem;
+  font-weight:700;
+}
+
+.vorstellungszeiten__eintrag:hover{
+  background:#eceff3;
+}
+
+.vorstellungszeiten__eintrag.ist-ausgewaehlt{
+  background:#dfe8ff;
+  border-color:#b5c7f7;
+  color:#12378d;
+}
+
+.veranstaltungskarte__aktionen{
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+}
+
+.leerzustand{
+  background:var(--kartenhintergrund);
+  border:1px solid var(--linienfarbe);
+  border-radius:22px;
+  padding:32px;
+  text-align:center;
+  box-shadow:var(--weicher-schatten);
+}
+
+.leerzustand__titel{
+  margin-bottom:8px;
+}
+
+.leerzustand__text{
+  color:var(--textfarbe-zurueckhaltend);
+  margin-bottom:16px;
+}
+
+.prozesshinweise{
+  padding:0 0 42px;
+}
+
+.prozesshinweise__raster{
+  display:grid;
+  grid-template-columns:repeat(3, 1fr);
+  gap:16px;
+}
+
+.prozesskarte{
+  background:var(--kartenhintergrund);
+  border:1px solid var(--linienfarbe);
+  border-radius:18px;
+  padding:18px;
+}
+
+.prozesskarte__titel{
+  margin-bottom:8px;
+  font-size:1rem;
+}
+
+.prozesskarte__text{
+  color:var(--textfarbe-zurueckhaltend);
+}
+
+.seitenfuss{
+  background:#ffffff;
+  border-top:1px solid var(--linienfarbe);
+  padding:24px 0 40px;
+  color:var(--textfarbe-zurueckhaltend);
+}
+
+.seitenfuss__inhalt{
+  display:flex;
+  justify-content:space-between;
+  gap:16px;
+  flex-wrap:wrap;
+}
+
+@media (max-width: 1100px){
+  .startbereich__inhalt,
+  .suchbereich__kopf,
+  .eventuebersicht__raster,
+  .prozesshinweise__raster{
+    grid-template-columns:1fr;
+  }
+
+  .suchformular{
+    grid-template-columns:1fr 1fr;
+  }
+}
+
+@media (max-width: 720px){
+  .seitenkopf__leiste{
+    min-height:auto;
+    padding:14px 0;
+    flex-direction:column;
+    align-items:flex-start;
+  }
+
+  .hauptnavigation{
+    gap:14px;
+  }
+
+  .suchformular{
+    grid-template-columns:1fr;
+  }
+
+  .suchformular__aktionen{
+    flex-direction:column;
+  }
+
+  .schaltflaeche{
+    width:100%;
+  }
+
+  .startbereich__titel{
+    max-width:none;
+  }
+
+  .veranstaltungskarte__aktionen{
+    flex-direction:column;
+  }
+}
