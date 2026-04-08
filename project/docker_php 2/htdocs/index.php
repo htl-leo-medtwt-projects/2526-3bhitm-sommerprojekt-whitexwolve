@@ -1,21 +1,5 @@
 <?php
 require_once __DIR__ . '/data/events.php';
-
-$searchTerm = trim($_GET['search'] ?? '');
-$selectedCategory = trim($_GET['category'] ?? '');
-
-$visibleEvents = array_filter($events, function ($event) use ($searchTerm, $selectedCategory) {
-    $matchesSearch =
-        $searchTerm === '' ||
-        stripos($event['title'], $searchTerm) !== false ||
-        stripos($event['description'], $searchTerm) !== false;
-
-    $matchesCategory =
-        $selectedCategory === '' ||
-        $event['category'] === $selectedCategory;
-
-    return $matchesSearch && $matchesCategory;
-});
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -61,7 +45,7 @@ $visibleEvents = array_filter($events, function ($event) use ($searchTerm, $sele
             </p>
           </div>
 
-          <form class="suchformular" method="GET" action="">
+          <form class="suchformular" id="eventSucheFormular" onsubmit="return false;">
             <div class="suchformular__feldgruppe suchformular__feldgruppe--gross">
               <label class="suchformular__label" for="search">Was suchst du?</label>
               <input
@@ -70,7 +54,7 @@ $visibleEvents = array_filter($events, function ($event) use ($searchTerm, $sele
                 id="search"
                 name="search"
                 placeholder="z. B. Starlight, Theater oder Cinema"
-                value="<?= htmlspecialchars($searchTerm) ?>"
+                autocomplete="off"
               >
             </div>
 
@@ -78,9 +62,9 @@ $visibleEvents = array_filter($events, function ($event) use ($searchTerm, $sele
               <label class="suchformular__label" for="category">Kategorie</label>
               <select class="suchformular__auswahl" id="category" name="category">
                 <option value="">Alle Kategorien</option>
-                <option value="Konzert" <?= $selectedCategory === 'Konzert' ? 'selected' : '' ?>>Konzert</option>
-                <option value="Theater" <?= $selectedCategory === 'Theater' ? 'selected' : '' ?>>Theater</option>
-                <option value="Kino" <?= $selectedCategory === 'Kino' ? 'selected' : '' ?>>Kino</option>
+                <option value="Konzert">Konzert</option>
+                <option value="Theater">Theater</option>
+                <option value="Kino">Kino</option>
               </select>
             </div>
 
@@ -90,15 +74,19 @@ $visibleEvents = array_filter($events, function ($event) use ($searchTerm, $sele
             </div>
 
             <div class="suchformular__aktionen">
-              <button class="schaltflaeche schaltflaeche--primaer" type="submit">Events finden</button>
-              <a class="schaltflaeche schaltflaeche--sekundaer" href="index.php">Zurücksetzen</a>
+              <button class="schaltflaeche schaltflaeche--primaer" type="button" id="suchButton">
+                Events finden
+              </button>
+              <button class="schaltflaeche schaltflaeche--sekundaer" type="button" id="resetButton">
+                Zurücksetzen
+              </button>
             </div>
           </form>
         </section>
       </div>
     </section>
 
-    <section class="eventuebersicht">
+    <section class="eventuebersicht" id="ergebnisbereich">
       <div class="seitenbreite">
         <div class="bereichskopf">
           <div>
@@ -106,50 +94,55 @@ $visibleEvents = array_filter($events, function ($event) use ($searchTerm, $sele
             <h2 class="bereichskopf__titel">Verfügbare Events</h2>
           </div>
           <div class="bereichskopf__ergebniszahl">
-            <?= count($visibleEvents) ?> Ergebnis<?= count($visibleEvents) === 1 ? '' : 'se' ?>
+            <span id="ergebnisAnzahl"><?= count($events) ?></span> Ergebnisse
           </div>
         </div>
 
-        <?php if (count($visibleEvents) > 0): ?>
-          <div class="eventuebersicht__raster">
-            <?php foreach ($visibleEvents as $event): ?>
-              <article class="veranstaltungskarte">
-                <div class="veranstaltungskarte__bildbereich veranstaltungskarte__bildbereich--<?= htmlspecialchars($event['theme']) ?>">
-                  <span class="veranstaltungskarte__kategorie"><?= htmlspecialchars($event['category']) ?></span>
-                  <h3 class="veranstaltungskarte__titel"><?= htmlspecialchars($event['title']) ?></h3>
+        <div class="eventuebersicht__raster" id="eventRaster">
+          <?php foreach ($events as $event): ?>
+            <article
+              class="veranstaltungskarte"
+              data-title="<?= htmlspecialchars(mb_strtolower($event['title'])) ?>"
+              data-description="<?= htmlspecialchars(mb_strtolower($event['description'])) ?>"
+              data-category="<?= htmlspecialchars(mb_strtolower($event['category'])) ?>"
+            >
+              <div class="veranstaltungskarte__bildbereich veranstaltungskarte__bildbereich--<?= htmlspecialchars($event['theme']) ?>">
+                <span class="veranstaltungskarte__kategorie"><?= htmlspecialchars($event['category']) ?></span>
+                <h3 class="veranstaltungskarte__titel"><?= htmlspecialchars($event['title']) ?></h3>
+              </div>
+
+              <div class="veranstaltungskarte__inhalt">
+                <p class="veranstaltungskarte__beschreibung"><?= htmlspecialchars($event['description']) ?></p>
+
+                <div class="veranstaltungskarte__meta">
+                  <span>📍 VibeSeat Hall</span>
+                  <span>🎟️ ab € <?= number_format($event['price'], 2, ',', '.') ?></span>
                 </div>
 
-                <div class="veranstaltungskarte__inhalt">
-                  <p class="veranstaltungskarte__beschreibung"><?= htmlspecialchars($event['description']) ?></p>
-
-                  <div class="veranstaltungskarte__meta">
-                    <span>📍 VibeSeat Hall</span>
-                    <span>🎟️ ab € <?= number_format($event['price'], 2, ',', '.') ?></span>
-                  </div>
-
-                  <div class="vorstellungszeiten">
-                    <?php foreach ($event['showtimes'] as $showtime): ?>
-                      <a class="vorstellungszeiten__eintrag" href="#">
-                        <?= htmlspecialchars($showtime) ?>
-                      </a>
-                    <?php endforeach; ?>
-                  </div>
-
-                  <div class="veranstaltungskarte__aktionen">
-                    <a class="schaltflaeche schaltflaeche--sekundaer" href="#">Details</a>
-                    <a class="schaltflaeche schaltflaeche--primaer" href="#">Vorstellung wählen</a>
-                  </div>
+                <div class="vorstellungszeiten">
+                  <?php foreach ($event['showtimes'] as $showtime): ?>
+                    <a class="vorstellungszeiten__eintrag" href="#">
+                      <?= htmlspecialchars($showtime) ?>
+                    </a>
+                  <?php endforeach; ?>
                 </div>
-              </article>
-            <?php endforeach; ?>
-          </div>
-        <?php else: ?>
-          <div class="leerzustand">
-            <h3 class="leerzustand__titel">Keine passenden Events gefunden</h3>
-            <p class="leerzustand__text">Versuche einen anderen Suchbegriff oder wähle wieder alle Kategorien aus.</p>
-            <a class="schaltflaeche schaltflaeche--primaer" href="index.php">Filter zurücksetzen</a>
-          </div>
-        <?php endif; ?>
+
+                <div class="veranstaltungskarte__aktionen">
+                  <a class="schaltflaeche schaltflaeche--sekundaer" href="#">Details</a>
+                  <a class="schaltflaeche schaltflaeche--primaer" href="#">Vorstellung wählen</a>
+                </div>
+              </div>
+            </article>
+          <?php endforeach; ?>
+        </div>
+
+        <div class="leerzustand" id="leerzustand" hidden>
+          <h3 class="leerzustand__titel">Keine passenden Events gefunden</h3>
+          <p class="leerzustand__text">Versuche einen anderen Suchbegriff oder eine andere Kategorie.</p>
+          <button class="schaltflaeche schaltflaeche--primaer" type="button" id="leerzustandResetButton">
+            Alles anzeigen
+          </button>
+        </div>
       </div>
     </section>
 

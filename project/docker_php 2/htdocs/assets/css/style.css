@@ -1,18 +1,25 @@
 :root{
-  --seitenhintergrund:#f3f4f6;
-  --kartenhintergrund:#ffffff;
-  --kartenhintergrund-zart:#f8f9fb;
-  --linienfarbe:#d7dbe1;
-  --textfarbe:#16181c;
-  --textfarbe-zurueckhaltend:#5f6672;
-  --aktionsfarbe:#0d4fd6;
-  --aktionsfarbe-hover:#0a43b7;
-  --kopfzeilenfarbe:#0f1217;
+  --seitenhintergrund:#f2efe8;
+  --seitenhintergrund-zwei:#e6dfd2;
+  --bereich-hintergrund:#f7f2e8;
+  --kartenflaeche:#fbf8f2;
+  --kartenflaeche-zwei:#f1e9dc;
+  --linienfarbe:#d5cab8;
+  --linienfarbe-stark:#aa9a82;
+  --textfarbe:#161311;
+  --textfarbe-sanft:#665b4d;
+  --akzent:#1864d8;
+  --akzent-hover:#114fad;
+  --akzent-zart:#dbe8ff;
+  --dunkel:#191714;
+  --dunkel-zwei:#2b261f;
+  --hell:#fffdf8;
   --maximale-breite:1240px;
-  --radius-gross:22px;
-  --radius-mittel:16px;
+  --radius-gross:28px;
+  --radius-mittel:18px;
   --radius-klein:12px;
-  --weicher-schatten:0 10px 24px rgba(18, 24, 33, 0.06);
+  --schatten:0 14px 40px rgba(30, 24, 15, 0.08);
+  --schatten-stark:0 18px 44px rgba(30, 24, 15, 0.12);
 }
 
 *{
@@ -27,10 +34,28 @@ html{
 
 body{
   min-height:100vh;
-  font-family:Inter, "Segoe UI", Arial, sans-serif;
-  background:var(--seitenhintergrund);
+  font-family:"Inter", "Segoe UI", Arial, sans-serif;
   color:var(--textfarbe);
+  background:
+    radial-gradient(circle at 10% 12%, rgba(255,255,255,0.72), transparent 0 18%),
+    radial-gradient(circle at 88% 18%, rgba(255,255,255,0.4), transparent 0 12%),
+    linear-gradient(180deg, var(--seitenhintergrund) 0%, var(--seitenhintergrund-zwei) 100%);
   line-height:1.55;
+}
+
+body::before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  opacity:0.28;
+  background:
+    linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)),
+    repeating-linear-gradient(
+      90deg,
+      transparent 0 120px,
+      rgba(22,19,17,0.025) 120px 121px
+    );
 }
 
 a{
@@ -53,9 +78,9 @@ select{
   position:sticky;
   top:0;
   z-index:100;
-  background:#ffffffee;
-  backdrop-filter:blur(10px);
-  border-bottom:1px solid var(--linienfarbe);
+  background:rgba(247, 242, 232, 0.88);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(102, 91, 77, 0.14);
 }
 
 .seitenkopf__leiste{
@@ -67,10 +92,10 @@ select{
 }
 
 .markenname{
-  font-size:1.4rem;
+  font-size:1.45rem;
   font-weight:900;
-  letter-spacing:-0.03em;
-  color:var(--kopfzeilenfarbe);
+  letter-spacing:-0.04em;
+  color:var(--textfarbe);
 }
 
 .hauptnavigation{
@@ -81,9 +106,9 @@ select{
 }
 
 .hauptnavigation__link{
-  color:var(--textfarbe-zurueckhaltend);
-  font-weight:600;
-  font-size:0.96rem;
+  color:var(--textfarbe-sanft);
+  font-weight:700;
+  font-size:0.95rem;
 }
 
 .hauptnavigation__link:hover{
@@ -91,112 +116,165 @@ select{
 }
 
 .startbereich{
-  padding:40px 0 28px;
-  background:#eef1f4;
-  border-bottom:1px solid var(--linienfarbe);
+  padding:36px 0 28px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0)),
+    var(--bereich-hintergrund);
+  border-bottom:1px solid rgba(102, 91, 77, 0.14);
+  position:relative;
+  overflow:hidden;
+}
+
+.startbereich::after{
+  content:"";
+  position:absolute;
+  right:-120px;
+  top:36px;
+  width:320px;
+  height:320px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(24,100,216,0.08), transparent 62%);
+  pointer-events:none;
 }
 
 .startbereich__inhalt{
   display:grid;
-  grid-template-columns:1.45fr 0.75fr;
+  grid-template-columns:1.2fr 0.8fr;
   gap:24px;
   align-items:start;
   margin-bottom:24px;
 }
 
 .startbereich__hinweis{
-  display:inline-block;
-  font-size:0.84rem;
-  font-weight:700;
-  letter-spacing:0.05em;
+  display:inline-flex;
+  align-items:center;
+  min-height:36px;
+  padding:0 12px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.56);
+  border:1px solid rgba(102, 91, 77, 0.14);
+  color:var(--textfarbe-sanft);
+  font-size:0.76rem;
+  font-weight:800;
+  letter-spacing:0.08em;
   text-transform:uppercase;
-  color:var(--textfarbe-zurueckhaltend);
   margin-bottom:14px;
 }
 
 .startbereich__titel{
-  font-size:clamp(2.3rem, 5vw, 4.8rem);
-  line-height:0.98;
-  letter-spacing:-0.05em;
+  font-size:clamp(2.2rem, 4vw, 4.1rem);
+  line-height:0.95;
+  letter-spacing:-0.06em;
   max-width:11ch;
   margin-bottom:16px;
 }
 
 .startbereich__beschreibung{
-  max-width:62ch;
-  color:var(--textfarbe-zurueckhaltend);
-  font-size:1.04rem;
+  max-width:58ch;
+  color:var(--textfarbe-sanft);
+  font-size:1rem;
 }
 
 .veranstaltungsort_karte{
-  background:#181c22;
-  color:#f2f4f7;
+  position:relative;
+  overflow:hidden;
+  background:
+    linear-gradient(135deg, var(--dunkel) 0%, var(--dunkel-zwei) 100%);
+  color:var(--hell);
   border-radius:var(--radius-gross);
   padding:24px;
-  box-shadow:var(--weicher-schatten);
+  box-shadow:var(--schatten-stark);
+}
+
+.veranstaltungsort_karte::before{
+  content:"";
+  position:absolute;
+  inset:auto -40px -40px auto;
+  width:180px;
+  height:180px;
+  border:1px solid rgba(255,255,255,0.12);
+  border-radius:50%;
 }
 
 .veranstaltungsort_karte__label{
   display:block;
-  color:#aeb7c3;
-  font-size:0.78rem;
+  color:#c8bcad;
+  font-size:0.76rem;
   font-weight:800;
   text-transform:uppercase;
-  letter-spacing:0.06em;
+  letter-spacing:0.08em;
   margin-bottom:10px;
 }
 
 .veranstaltungsort_karte__titel{
-  font-size:1.7rem;
-  line-height:1.08;
+  font-size:1.65rem;
+  line-height:1.02;
+  letter-spacing:-0.04em;
   margin-bottom:12px;
 }
 
 .veranstaltungsort_karte__text{
-  color:#d2d8e1;
+  color:#ddd3c8;
 }
 
 .suchbereich{
-  background:var(--kartenhintergrund);
-  border:1px solid var(--linienfarbe);
-  border-radius:28px;
-  padding:28px;
-  box-shadow:var(--weicher-schatten);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.46), rgba(255,255,255,0.18)),
+    var(--kartenflaeche);
+  border:1px solid rgba(102, 91, 77, 0.16);
+  border-radius:30px;
+  padding:30px;
+  box-shadow:var(--schatten);
+  position:relative;
+}
+
+.suchbereich::after{
+  content:"";
+  position:absolute;
+  inset:16px;
+  border-radius:20px;
+  border:1px dashed rgba(102, 91, 77, 0.12);
+  pointer-events:none;
 }
 
 .suchbereich__kopf{
   display:grid;
-  grid-template-columns:1.2fr 0.8fr;
+  grid-template-columns:1.15fr 0.85fr;
   gap:20px;
   align-items:end;
-  margin-bottom:22px;
+  margin-bottom:24px;
+  position:relative;
+  z-index:1;
 }
 
 .suchbereich__untertitel{
-  font-size:0.84rem;
+  font-size:0.76rem;
   font-weight:800;
   text-transform:uppercase;
-  letter-spacing:0.05em;
-  color:var(--textfarbe-zurueckhaltend);
+  letter-spacing:0.1em;
+  color:var(--textfarbe-sanft);
   margin-bottom:8px;
 }
 
 .suchbereich__titel{
-  font-size:clamp(1.7rem, 3vw, 2.5rem);
-  line-height:1.04;
-  letter-spacing:-0.04em;
+  font-size:clamp(1.65rem, 3vw, 2.6rem);
+  line-height:0.98;
+  letter-spacing:-0.05em;
+  max-width:13ch;
 }
 
 .suchbereich__info{
-  color:var(--textfarbe-zurueckhaltend);
+  color:var(--textfarbe-sanft);
   max-width:54ch;
 }
 
 .suchformular{
   display:grid;
-  grid-template-columns:2.2fr 1fr 1fr auto;
+  grid-template-columns:2.45fr 1fr 1fr auto;
   gap:14px;
   align-items:end;
+  position:relative;
+  z-index:1;
 }
 
 .suchformular__feldgruppe{
@@ -205,34 +283,31 @@ select{
   gap:8px;
 }
 
-.suchformular__feldgruppe--gross{
-  min-width:0;
-}
-
 .suchformular__label{
-  font-size:0.82rem;
+  font-size:0.76rem;
   font-weight:800;
   text-transform:uppercase;
-  letter-spacing:0.05em;
-  color:var(--textfarbe-zurueckhaltend);
+  letter-spacing:0.1em;
+  color:var(--textfarbe-sanft);
 }
 
 .suchformular__eingabe,
 .suchformular__auswahl,
 .suchformular__festwert{
   width:100%;
-  min-height:58px;
-  border:1px solid var(--linienfarbe);
-  background:var(--kartenhintergrund-zart);
-  border-radius:14px;
+  min-height:62px;
+  border:1px solid rgba(102, 91, 77, 0.16);
+  background:rgba(255,253,249,0.92);
+  border-radius:16px;
   padding:0 16px;
   color:var(--textfarbe);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.75);
 }
 
 .suchformular__eingabe:focus,
 .suchformular__auswahl:focus{
   outline:none;
-  border-color:#8a9bb6;
+  border-color:#8aa7de;
   background:#ffffff;
 }
 
@@ -249,16 +324,17 @@ select{
 }
 
 .schaltflaeche{
-  min-height:58px;
-  padding:0 20px;
-  border-radius:14px;
+  min-height:62px;
+  padding:0 22px;
+  border-radius:16px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
   font-weight:800;
-  transition:0.18s ease;
   border:1px solid transparent;
   cursor:pointer;
+  transition:0.18s ease;
+  white-space:nowrap;
 }
 
 .schaltflaeche:hover{
@@ -266,22 +342,22 @@ select{
 }
 
 .schaltflaeche--primaer{
-  background:var(--aktionsfarbe);
+  background:var(--akzent);
   color:#ffffff;
 }
 
 .schaltflaeche--primaer:hover{
-  background:var(--aktionsfarbe-hover);
+  background:var(--akzent-hover);
 }
 
 .schaltflaeche--sekundaer{
-  background:#ffffff;
+  background:rgba(255,255,255,0.44);
   color:var(--textfarbe);
-  border-color:var(--linienfarbe);
+  border-color:rgba(102, 91, 77, 0.16);
 }
 
 .eventuebersicht{
-  padding:36px 0;
+  padding:38px 0 34px;
 }
 
 .bereichskopf{
@@ -290,27 +366,31 @@ select{
   align-items:end;
   gap:18px;
   flex-wrap:wrap;
-  margin-bottom:20px;
+  margin-bottom:22px;
 }
 
 .bereichskopf__untertitel{
-  font-size:0.84rem;
+  font-size:0.76rem;
   font-weight:800;
   text-transform:uppercase;
-  letter-spacing:0.05em;
-  color:var(--textfarbe-zurueckhaltend);
+  letter-spacing:0.1em;
+  color:var(--textfarbe-sanft);
   margin-bottom:8px;
 }
 
 .bereichskopf__titel{
-  font-size:clamp(1.6rem, 3vw, 2.4rem);
-  letter-spacing:-0.04em;
-  line-height:1.04;
+  font-size:clamp(1.7rem, 3vw, 2.7rem);
+  line-height:0.98;
+  letter-spacing:-0.05em;
 }
 
 .bereichskopf__ergebniszahl{
-  color:var(--textfarbe-zurueckhaltend);
-  font-weight:600;
+  color:var(--textfarbe-sanft);
+  font-weight:700;
+  padding:10px 14px;
+  background:rgba(255,255,255,0.42);
+  border:1px solid rgba(102, 91, 77, 0.12);
+  border-radius:999px;
 }
 
 .eventuebersicht__raster{
@@ -320,124 +400,189 @@ select{
 }
 
 .veranstaltungskarte{
-  background:var(--kartenhintergrund);
-  border:1px solid var(--linienfarbe);
-  border-radius:22px;
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.38), rgba(255,255,255,0.08)),
+    var(--kartenflaeche);
+  border:1px solid rgba(102, 91, 77, 0.16);
+  border-radius:26px;
   overflow:hidden;
-  box-shadow:var(--weicher-schatten);
+  box-shadow:var(--schatten);
+  display:flex;
+  flex-direction:column;
+  min-height:100%;
+  transition:transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.veranstaltungskarte:hover{
+  transform:translateY(-3px);
+  box-shadow:0 20px 42px rgba(30,24,15,0.12);
+}
+
+.veranstaltungskarte[hidden]{
+  display:none !important;
 }
 
 .veranstaltungskarte__bildbereich{
-  min-height:210px;
+  min-height:220px;
   padding:18px;
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  color:#ffffff;
+  position:relative;
+  overflow:hidden;
+  border-bottom:1px solid rgba(102, 91, 77, 0.12);
+}
+
+.veranstaltungskarte__bildbereich::before{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.2)),
+    radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 36%);
+}
+
+.veranstaltungskarte__bildbereich::after{
+  content:"";
+  position:absolute;
+  right:18px;
+  bottom:18px;
+  width:62px;
+  height:62px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,0.14);
+}
+
+.veranstaltungskarte__bildbereich > *{
+  position:relative;
+  z-index:1;
 }
 
 .veranstaltungskarte__bildbereich--nachtblau{
-  background:linear-gradient(180deg, #1a2a45 0%, #0d1524 100%);
+  background:linear-gradient(180deg, #476189 0%, #223145 100%);
 }
 
 .veranstaltungskarte__bildbereich--bordeaux{
-  background:linear-gradient(180deg, #5f1f2e 0%, #241216 100%);
+  background:linear-gradient(180deg, #7c4851 0%, #3a1f25 100%);
 }
 
 .veranstaltungskarte__bildbereich--dunkelgrau{
-  background:linear-gradient(180deg, #3d434d 0%, #181b20 100%);
+  background:linear-gradient(180deg, #767068 0%, #312d28 100%);
 }
 
 .veranstaltungskarte__bildbereich--oliv{
-  background:linear-gradient(180deg, #5d6240 0%, #202317 100%);
+  background:linear-gradient(180deg, #7a7e58 0%, #3b3d2b 100%);
 }
 
 .veranstaltungskarte__kategorie{
   align-self:flex-start;
-  background:rgba(255,255,255,0.12);
-  border:1px solid rgba(255,255,255,0.14);
-  border-radius:999px;
   padding:8px 12px;
-  font-size:0.82rem;
-  font-weight:700;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,0.18);
+  background:rgba(255,255,255,0.08);
+  color:#fff8f1;
+  font-size:0.75rem;
+  font-weight:800;
+  letter-spacing:0.08em;
+  text-transform:uppercase;
 }
 
 .veranstaltungskarte__titel{
-  font-size:1.55rem;
-  line-height:1.02;
-  letter-spacing:-0.04em;
-  max-width:12ch;
+  max-width:10ch;
+  font-size:clamp(2rem, 3vw, 2.7rem);
+  line-height:0.9;
+  letter-spacing:-0.06em;
+  color:#fff8f1;
+  text-wrap:balance;
+  text-shadow:0 4px 14px rgba(0,0,0,0.16);
 }
 
 .veranstaltungskarte__inhalt{
   padding:18px;
+  display:flex;
+  flex-direction:column;
+  gap:14px;
 }
 
 .veranstaltungskarte__beschreibung{
-  color:var(--textfarbe-zurueckhaltend);
-  margin-bottom:14px;
+  color:var(--textfarbe-sanft);
+  font-size:0.95rem;
+  min-height:44px;
 }
 
 .veranstaltungskarte__meta{
   display:flex;
-  gap:14px;
   flex-wrap:wrap;
-  color:var(--textfarbe-zurueckhaltend);
-  font-size:0.94rem;
-  margin-bottom:14px;
+  gap:10px;
+}
+
+.veranstaltungskarte__meta span{
+  display:inline-flex;
+  align-items:center;
+  min-height:34px;
+  padding:0 12px;
+  border-radius:999px;
+  background:var(--kartenflaeche-zwei);
+  color:#5b5145;
+  font-size:0.84rem;
+  font-weight:800;
 }
 
 .vorstellungszeiten{
   display:flex;
   flex-wrap:wrap;
   gap:10px;
-  margin-bottom:16px;
 }
 
 .vorstellungszeiten__eintrag{
   min-height:40px;
-  padding:0 12px;
+  padding:0 14px;
   display:inline-flex;
   align-items:center;
+  justify-content:center;
   border-radius:999px;
-  background:#f5f6f8;
-  border:1px solid #e1e5ea;
-  color:#2d3440;
-  font-size:0.9rem;
-  font-weight:700;
+  background:rgba(255,255,255,0.45);
+  border:1px solid rgba(102, 91, 77, 0.14);
+  color:#2f2821;
+  font-size:0.88rem;
+  font-weight:800;
 }
 
 .vorstellungszeiten__eintrag:hover{
-  background:#eceff3;
+  background:#efe8dd;
 }
 
 .vorstellungszeiten__eintrag.ist-ausgewaehlt{
-  background:#dfe8ff;
-  border-color:#b5c7f7;
-  color:#12378d;
+  background:var(--dunkel);
+  border-color:var(--dunkel);
+  color:var(--hell);
 }
 
 .veranstaltungskarte__aktionen{
-  display:flex;
+  display:grid;
+  grid-template-columns:1fr 1.35fr;
   gap:10px;
-  flex-wrap:wrap;
+  margin-top:2px;
 }
 
 .leerzustand{
-  background:var(--kartenhintergrund);
-  border:1px solid var(--linienfarbe);
-  border-radius:22px;
-  padding:32px;
+  background:rgba(255,255,255,0.42);
+  border:1px solid rgba(102, 91, 77, 0.16);
+  border-radius:24px;
+  padding:34px;
   text-align:center;
-  box-shadow:var(--weicher-schatten);
+  box-shadow:var(--schatten);
 }
 
 .leerzustand__titel{
+  font-size:1.8rem;
+  line-height:0.96;
+  letter-spacing:-0.05em;
   margin-bottom:8px;
 }
 
 .leerzustand__text{
-  color:var(--textfarbe-zurueckhaltend);
+  color:var(--textfarbe-sanft);
   margin-bottom:16px;
 }
 
@@ -452,26 +597,28 @@ select{
 }
 
 .prozesskarte{
-  background:var(--kartenhintergrund);
-  border:1px solid var(--linienfarbe);
+  background:rgba(255,255,255,0.36);
+  border:1px solid rgba(102, 91, 77, 0.14);
   border-radius:18px;
   padding:18px;
 }
 
 .prozesskarte__titel{
+  font-size:1.08rem;
+  line-height:1.05;
+  letter-spacing:-0.03em;
   margin-bottom:8px;
-  font-size:1rem;
 }
 
 .prozesskarte__text{
-  color:var(--textfarbe-zurueckhaltend);
+  color:var(--textfarbe-sanft);
 }
 
 .seitenfuss{
-  background:#ffffff;
-  border-top:1px solid var(--linienfarbe);
+  background:rgba(247, 242, 232, 0.8);
+  border-top:1px solid rgba(102, 91, 77, 0.14);
   padding:24px 0 40px;
-  color:var(--textfarbe-zurueckhaltend);
+  color:var(--textfarbe-sanft);
 }
 
 .seitenfuss__inhalt{
@@ -481,7 +628,7 @@ select{
   flex-wrap:wrap;
 }
 
-@media (max-width: 1100px){
+@media (max-width:1100px){
   .startbereich__inhalt,
   .suchbereich__kopf,
   .eventuebersicht__raster,
@@ -494,7 +641,7 @@ select{
   }
 }
 
-@media (max-width: 720px){
+@media (max-width:720px){
   .seitenkopf__leiste{
     min-height:auto;
     padding:14px 0;
@@ -522,7 +669,12 @@ select{
     max-width:none;
   }
 
+  .veranstaltungskarte__titel{
+    max-width:11ch;
+    font-size:2rem;
+  }
+
   .veranstaltungskarte__aktionen{
-    flex-direction:column;
+    grid-template-columns:1fr;
   }
 }

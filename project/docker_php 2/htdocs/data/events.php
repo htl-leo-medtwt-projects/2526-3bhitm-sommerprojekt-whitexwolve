@@ -47,4 +47,16 @@ $events = [
             'Do · 21:00',
         ],
     ],
+    [
+        'title' => 'Moonlight Cinema Night',
+        'category' => 'Kino',
+        'description' => 'Ein stilvoller Filmabend mit mehreren Vorstellungszeiten und ruhiger Atmosphäre.',
+        'price' => 14.90,
+        'theme' => 'nachtblau',
+        'showtimes' => [
+            'Heute · 18:00',
+            'Heute · 20:15',
+            'Morgen · 19:30',
+        ]
+    ]
 ];
