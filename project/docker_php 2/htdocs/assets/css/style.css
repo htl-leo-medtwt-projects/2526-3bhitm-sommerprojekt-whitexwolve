@@ -1,25 +1,27 @@
 :root{
-  --seitenhintergrund:#f2efe8;
-  --seitenhintergrund-zwei:#e6dfd2;
-  --bereich-hintergrund:#f7f2e8;
-  --kartenflaeche:#fbf8f2;
-  --kartenflaeche-zwei:#f1e9dc;
-  --linienfarbe:#d5cab8;
-  --linienfarbe-stark:#aa9a82;
+  --seitenhintergrund:#f3eee4;
+  --seitenhintergrund-zwei:#e3d8c7;
+  --bereich-hintergrund:#f8f2e9;
+  --kartenflaeche:#fcf8f1;
+  --kartenflaeche-zwei:#f0e6d8;
+  --linienfarbe:#d5c7b2;
+  --linienfarbe-stark:#a89275;
   --textfarbe:#161311;
-  --textfarbe-sanft:#665b4d;
-  --akzent:#1864d8;
-  --akzent-hover:#114fad;
-  --akzent-zart:#dbe8ff;
-  --dunkel:#191714;
-  --dunkel-zwei:#2b261f;
-  --hell:#fffdf8;
-  --maximale-breite:1240px;
-  --radius-gross:28px;
+  --textfarbe-sanft:#665b4c;
+  --textfarbe-hell:#ddd3c8;
+  --akzent:#1c63d8;
+  --akzent-hover:#144faf;
+  --akzent-zart:#dbe6ff;
+  --dunkel:#181410;
+  --dunkel-zwei:#29211a;
+  --hell:#fffaf3;
+  --maximale-breite:1320px;
+  --radius-gross:30px;
   --radius-mittel:18px;
   --radius-klein:12px;
-  --schatten:0 14px 40px rgba(30, 24, 15, 0.08);
-  --schatten-stark:0 18px 44px rgba(30, 24, 15, 0.12);
+  --schatten:0 16px 40px rgba(31, 24, 14, 0.08);
+  --schatten-stark:0 22px 50px rgba(31, 24, 14, 0.14);
+  --transition:0.2s ease;
 }
 
 *{
@@ -34,11 +36,12 @@ html{
 
 body{
   min-height:100vh;
-  font-family:"Inter", "Segoe UI", Arial, sans-serif;
+  font-family:"Inter","Segoe UI",Arial,sans-serif;
   color:var(--textfarbe);
   background:
-    radial-gradient(circle at 10% 12%, rgba(255,255,255,0.72), transparent 0 18%),
-    radial-gradient(circle at 88% 18%, rgba(255,255,255,0.4), transparent 0 12%),
+    radial-gradient(circle at 10% 10%, rgba(255,255,255,0.78), transparent 0 18%),
+    radial-gradient(circle at 88% 16%, rgba(28,99,216,0.10), transparent 0 16%),
+    radial-gradient(circle at 60% 42%, rgba(255,255,255,0.34), transparent 0 13%),
     linear-gradient(180deg, var(--seitenhintergrund) 0%, var(--seitenhintergrund-zwei) 100%);
   line-height:1.55;
 }
@@ -48,39 +51,59 @@ body::before{
   position:fixed;
   inset:0;
   pointer-events:none;
-  opacity:0.28;
+  opacity:0.26;
   background:
-    linear-gradient(rgba(255,255,255,0.02), rgba(255,255,255,0.02)),
     repeating-linear-gradient(
       90deg,
       transparent 0 120px,
-      rgba(22,19,17,0.025) 120px 121px
+      rgba(22,19,17,0.022) 120px 121px
+    ),
+    repeating-linear-gradient(
+      0deg,
+      transparent 0 120px,
+      rgba(22,19,17,0.014) 120px 121px
     );
+}
+
+img,
+svg,
+picture{
+  display:block;
+  max-width:100%;
 }
 
 a{
   color:inherit;
   text-decoration:none;
+  transition:var(--transition);
 }
 
 button,
 input,
-select{
+select,
+textarea{
   font:inherit;
 }
 
+button{
+  border:none;
+  background:none;
+}
+
 .seitenbreite{
-  width:min(94%, var(--maximale-breite));
+  width:min(95%, var(--maximale-breite));
   margin-inline:auto;
 }
+
+/* Header */
 
 .seitenkopf{
   position:sticky;
   top:0;
   z-index:100;
-  background:rgba(247, 242, 232, 0.88);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(102, 91, 77, 0.14);
+  background:rgba(248, 242, 233, 0.84);
+  backdrop-filter:blur(14px);
+  border-bottom:1px solid rgba(102, 91, 76, 0.12);
 }
 
 .seitenkopf__leiste{
@@ -92,9 +115,11 @@ select{
 }
 
 .markenname{
-  font-size:1.45rem;
-  font-weight:900;
-  letter-spacing:-0.04em;
+  font-family:"Barlow Condensed",sans-serif;
+  font-size:2rem;
+  font-weight:800;
+  letter-spacing:0.02em;
+  text-transform:uppercase;
   color:var(--textfarbe);
 }
 
@@ -115,85 +140,136 @@ select{
   color:var(--textfarbe);
 }
 
+/* Hero */
+
 .startbereich{
-  padding:36px 0 28px;
+  padding:40px 0 30px;
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.1), rgba(255,255,255,0)),
+    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0)),
     var(--bereich-hintergrund);
   border-bottom:1px solid rgba(102, 91, 77, 0.14);
   position:relative;
   overflow:hidden;
 }
 
+.startbereich::before{
+  content:"";
+  position:absolute;
+  left:-140px;
+  top:140px;
+  width:360px;
+  height:360px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,255,255,0.52), transparent 62%);
+  pointer-events:none;
+}
+
 .startbereich::after{
   content:"";
   position:absolute;
-  right:-120px;
-  top:36px;
-  width:320px;
-  height:320px;
+  right:-140px;
+  top:20px;
+  width:340px;
+  height:340px;
   border-radius:50%;
-  background:radial-gradient(circle, rgba(24,100,216,0.08), transparent 62%);
+  background:radial-gradient(circle, rgba(28,99,216,0.08), transparent 62%);
   pointer-events:none;
 }
 
 .startbereich__inhalt{
   display:grid;
-  grid-template-columns:1.2fr 0.8fr;
-  gap:24px;
+  grid-template-columns:minmax(0, 1.35fr) minmax(340px, 0.85fr);
+  gap:26px;
   align-items:start;
-  margin-bottom:24px;
+  margin-bottom:26px;
+  position:relative;
+  z-index:1;
+}
+
+.startbereich__textblock{
+  display:grid;
+  grid-template-columns:minmax(0, 1fr) minmax(240px, 0.52fr);
+  gap:18px 28px;
+  align-items:start;
 }
 
 .startbereich__hinweis{
+  grid-column:1 / -1;
   display:inline-flex;
   align-items:center;
-  min-height:36px;
-  padding:0 12px;
+  justify-self:start;
+  min-height:38px;
+  padding:0 14px;
   border-radius:999px;
-  background:rgba(255,255,255,0.56);
+  background:rgba(255,255,255,0.62);
   border:1px solid rgba(102, 91, 77, 0.14);
   color:var(--textfarbe-sanft);
   font-size:0.76rem;
   font-weight:800;
   letter-spacing:0.08em;
   text-transform:uppercase;
-  margin-bottom:14px;
+  margin-bottom:2px;
 }
 
 .startbereich__titel{
-  font-size:clamp(2.2rem, 4vw, 4.1rem);
-  line-height:0.95;
-  letter-spacing:-0.06em;
-  max-width:11ch;
-  margin-bottom:16px;
+  grid-column:1 / 2;
+  font-family:"Barlow Condensed",sans-serif;
+  font-size:clamp(3.3rem, 6vw, 6.1rem);
+  line-height:0.85;
+  letter-spacing:-0.04em;
+  text-transform:uppercase;
+  max-width:7.8ch;
+  margin-bottom:0;
 }
 
 .startbereich__beschreibung{
-  max-width:58ch;
+  grid-column:2 / 3;
+  align-self:end;
+  max-width:28ch;
   color:var(--textfarbe-sanft);
   font-size:1rem;
+  line-height:1.7;
+  margin-top:22px;
+  padding:20px 22px;
+  background:rgba(255,255,255,0.40);
+  border:1px solid rgba(102, 91, 77, 0.12);
+  border-radius:22px;
+  box-shadow:var(--schatten);
 }
+
+/* Venue card */
 
 .veranstaltungsort_karte{
   position:relative;
   overflow:hidden;
-  background:
-    linear-gradient(135deg, var(--dunkel) 0%, var(--dunkel-zwei) 100%);
+  background:linear-gradient(135deg, var(--dunkel) 0%, var(--dunkel-zwei) 100%);
   color:var(--hell);
   border-radius:var(--radius-gross);
-  padding:24px;
+  padding:28px;
+  min-height:100%;
   box-shadow:var(--schatten-stark);
 }
 
 .veranstaltungsort_karte::before{
   content:"";
   position:absolute;
-  inset:auto -40px -40px auto;
-  width:180px;
-  height:180px;
+  right:-30px;
+  bottom:-30px;
+  width:190px;
+  height:190px;
   border:1px solid rgba(255,255,255,0.12);
   border-radius:50%;
+}
+
+.veranstaltungsort_karte::after{
+  content:"";
+  position:absolute;
+  left:18px;
+  top:18px;
+  width:52px;
+  height:52px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(255,255,255,0.08), transparent 72%);
 }
 
 .veranstaltungsort_karte__label{
@@ -201,39 +277,63 @@ select{
   color:#c8bcad;
   font-size:0.76rem;
   font-weight:800;
-  text-transform:uppercase;
   letter-spacing:0.08em;
+  text-transform:uppercase;
   margin-bottom:10px;
+  position:relative;
+  z-index:1;
 }
 
 .veranstaltungsort_karte__titel{
-  font-size:1.65rem;
-  line-height:1.02;
-  letter-spacing:-0.04em;
-  margin-bottom:12px;
+  position:relative;
+  z-index:1;
+  font-family:"Barlow Condensed",sans-serif;
+  font-size:2.2rem;
+  line-height:0.9;
+  letter-spacing:-0.03em;
+  text-transform:uppercase;
+  margin-bottom:14px;
 }
 
 .veranstaltungsort_karte__text{
-  color:#ddd3c8;
+  position:relative;
+  z-index:1;
+  color:var(--textfarbe-hell);
+  max-width:28ch;
+  font-size:1rem;
+  line-height:1.65;
 }
+
+/* Search */
 
 .suchbereich{
   background:
-    linear-gradient(180deg, rgba(255,255,255,0.46), rgba(255,255,255,0.18)),
+    linear-gradient(180deg, rgba(255,255,255,0.48), rgba(255,255,255,0.18)),
     var(--kartenflaeche);
   border:1px solid rgba(102, 91, 77, 0.16);
-  border-radius:30px;
-  padding:30px;
+  border-radius:32px;
+  padding:32px;
   box-shadow:var(--schatten);
   position:relative;
+  overflow:hidden;
+}
+
+.suchbereich::before{
+  content:"";
+  position:absolute;
+  inset:auto auto -80px -80px;
+  width:220px;
+  height:220px;
+  border-radius:50%;
+  background:radial-gradient(circle, rgba(28,99,216,0.08), transparent 64%);
 }
 
 .suchbereich::after{
   content:"";
   position:absolute;
   inset:16px;
-  border-radius:20px;
-  border:1px dashed rgba(102, 91, 77, 0.12);
+  border-radius:22px;
+  border:1px dashed rgba(102, 91, 77, 0.10);
   pointer-events:none;
 }
 
@@ -257,10 +357,12 @@ select{
 }
 
 .suchbereich__titel{
-  font-size:clamp(1.65rem, 3vw, 2.6rem);
-  line-height:0.98;
-  letter-spacing:-0.05em;
-  max-width:13ch;
+  font-family:"Barlow Condensed",sans-serif;
+  font-size:clamp(2rem, 4vw, 3.2rem);
+  line-height:0.9;
+  letter-spacing:-0.03em;
+  text-transform:uppercase;
+  max-width:12ch;
 }
 
 .suchbereich__info{
@@ -270,7 +372,7 @@ select{
 
 .suchformular{
   display:grid;
-  grid-template-columns:2.45fr 1fr 1fr auto;
+  grid-template-columns:2.7fr 1fr 1fr auto;
   gap:14px;
   align-items:end;
   position:relative;
@@ -295,13 +397,13 @@ select{
 .suchformular__auswahl,
 .suchformular__festwert{
   width:100%;
-  min-height:62px;
+  min-height:64px;
   border:1px solid rgba(102, 91, 77, 0.16);
-  background:rgba(255,253,249,0.92);
+  background:rgba(255,253,249,0.94);
   border-radius:16px;
   padding:0 16px;
   color:var(--textfarbe);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.75);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,0.78);
 }
 
 .suchformular__eingabe:focus,
@@ -323,8 +425,10 @@ select{
   flex-wrap:wrap;
 }
 
+/* Buttons */
+
 .schaltflaeche{
-  min-height:62px;
+  min-height:64px;
   padding:0 22px;
   border-radius:16px;
   display:inline-flex;
@@ -333,7 +437,7 @@ select{
   font-weight:800;
   border:1px solid transparent;
   cursor:pointer;
-  transition:0.18s ease;
+  transition:var(--transition);
   white-space:nowrap;
 }
 
@@ -343,7 +447,7 @@ select{
 
 .schaltflaeche--primaer{
   background:var(--akzent);
-  color:#ffffff;
+  color:#fff;
 }
 
 .schaltflaeche--primaer:hover{
@@ -356,8 +460,14 @@ select{
   border-color:rgba(102, 91, 77, 0.16);
 }
 
+.schaltflaeche--sekundaer:hover{
+  background:rgba(255,255,255,0.74);
+}
+
+/* Event section */
+
 .eventuebersicht{
-  padding:38px 0 34px;
+  padding:40px 0 34px;
 }
 
 .bereichskopf{
@@ -379,9 +489,11 @@ select{
 }
 
 .bereichskopf__titel{
-  font-size:clamp(1.7rem, 3vw, 2.7rem);
-  line-height:0.98;
-  letter-spacing:-0.05em;
+  font-family:"Barlow Condensed",sans-serif;
+  font-size:clamp(2rem, 4vw, 3rem);
+  line-height:0.9;
+  letter-spacing:-0.03em;
+  text-transform:uppercase;
 }
 
 .bereichskopf__ergebniszahl{
@@ -415,7 +527,7 @@ select{
 
 .veranstaltungskarte:hover{
   transform:translateY(-3px);
-  box-shadow:0 20px 42px rgba(30,24,15,0.12);
+  box-shadow:0 20px 42px rgba(31,24,14,0.12);
 }
 
 .veranstaltungskarte[hidden]{
@@ -438,7 +550,7 @@ select{
   position:absolute;
   inset:0;
   background:
-    linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.2)),
+    linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.20)),
     radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 36%);
 }
 
@@ -488,10 +600,12 @@ select{
 }
 
 .veranstaltungskarte__titel{
-  max-width:10ch;
-  font-size:clamp(2rem, 3vw, 2.7rem);
-  line-height:0.9;
-  letter-spacing:-0.06em;
+  max-width:9ch;
+  font-family:"Barlow Condensed",sans-serif;
+  font-size:clamp(2.25rem, 3vw, 3rem);
+  line-height:0.86;
+  letter-spacing:-0.04em;
+  text-transform:uppercase;
   color:#fff8f1;
   text-wrap:balance;
   text-shadow:0 4px 14px rgba(0,0,0,0.16);
@@ -565,6 +679,8 @@ select{
   margin-top:2px;
 }
 
+/* Empty state */
+
 .leerzustand{
   background:rgba(255,255,255,0.42);
   border:1px solid rgba(102, 91, 77, 0.16);
@@ -575,9 +691,11 @@ select{
 }
 
 .leerzustand__titel{
-  font-size:1.8rem;
-  line-height:0.96;
-  letter-spacing:-0.05em;
+  font-family:"Barlow Condensed",sans-serif;
+  font-size:2rem;
+  line-height:0.9;
+  letter-spacing:-0.03em;
+  text-transform:uppercase;
   margin-bottom:8px;
 }
 
@@ -585,6 +703,8 @@ select{
   color:var(--textfarbe-sanft);
   margin-bottom:16px;
 }
+
+/* Steps */
 
 .prozesshinweise{
   padding:0 0 42px;
@@ -601,12 +721,15 @@ select{
   border:1px solid rgba(102, 91, 77, 0.14);
   border-radius:18px;
   padding:18px;
+  box-shadow:var(--schatten);
 }
 
 .prozesskarte__titel{
-  font-size:1.08rem;
-  line-height:1.05;
-  letter-spacing:-0.03em;
+  font-family:"Barlow Condensed",sans-serif;
+  font-size:1.45rem;
+  line-height:0.94;
+  letter-spacing:-0.02em;
+  text-transform:uppercase;
   margin-bottom:8px;
 }
 
@@ -614,8 +737,10 @@ select{
   color:var(--textfarbe-sanft);
 }
 
+/* Footer */
+
 .seitenfuss{
-  background:rgba(247, 242, 232, 0.8);
+  background:rgba(247, 242, 232, 0.80);
   border-top:1px solid rgba(102, 91, 77, 0.14);
   padding:24px 0 40px;
   color:var(--textfarbe-sanft);
@@ -628,8 +753,23 @@ select{
   flex-wrap:wrap;
 }
 
+/* Responsive */
+
 @media (max-width:1100px){
-  .startbereich__inhalt,
+  .startbereich__inhalt{
+    grid-template-columns:1fr;
+  }
+
+  .startbereich__textblock{
+    grid-template-columns:1fr;
+  }
+
+  .startbereich__beschreibung{
+    grid-column:auto;
+    max-width:60ch;
+    margin-top:0;
+  }
+
   .suchbereich__kopf,
   .eventuebersicht__raster,
   .prozesshinweise__raster{
@@ -667,11 +807,12 @@ select{
 
   .startbereich__titel{
     max-width:none;
+    font-size:3.5rem;
   }
 
   .veranstaltungskarte__titel{
     max-width:11ch;
-    font-size:2rem;
+    font-size:2.1rem;
   }
 
   .veranstaltungskarte__aktionen{
