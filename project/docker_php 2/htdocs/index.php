@@ -50,21 +50,20 @@ function lower_text($value): string
                         </p>
 
                         <h1 class="startbereich__titel">
-                            Tickets finden, Vorstellung wählen, Sitzplatz später perfekt auswählen
+                            Tickets finden, Vorstellung aussuchen, Sitzplatz durch Vibes entdecken
                         </h1>
 
-                        <p class="startbereich__beschreibung">
-                            VibeSeat zeigt dir zuerst alle kommenden Events in einem festen Veranstaltungsort.
-                            Seat‑Vibes, Empfehlungen und der Saalplan kommen erst im nächsten Schritt.
-                        </p>
                     </div>
 
                     <aside class="veranstaltungsort_karte">
                         <span class="veranstaltungsort_karte__label">Veranstaltungsort</span>
                         <h2 class="veranstaltungsort_karte__titel"><?= esc(HALL_NAME) ?></h2>
-                        <p class="veranstaltungsort_karte__text">
-                            Alle Events finden in derselben Location statt. Dadurch bleibt die Startseite
-                            übersichtlich und näher an einem echten Ticketshop.
+                        <p>
+                            Erlebe deine Lieblingsveranstaltungen in der <?= esc(HALL_NAME) ?>, dem
+                            angesagten Veranstaltungsort in der Stadt. Von mitreißenden Konzerten über
+                            fesselnde Theaterstücke bis hin zu spannenden Kinofilmen – hier findest du
+                            alles an einem Ort. Genieße erstklassige Unterhaltung und reserviere jetzt
+                            deine Tickets für unvergessliche Erlebnisse!
                         </p>
                     </aside>
                 </div>

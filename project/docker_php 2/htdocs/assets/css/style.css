@@ -1,27 +1,19 @@
 :root{
-  --seitenhintergrund:#f3eee4;
-  --seitenhintergrund-zwei:#e3d8c7;
-  --bereich-hintergrund:#f8f2e9;
-  --kartenflaeche:#fcf8f1;
-  --kartenflaeche-zwei:#f0e6d8;
-  --linienfarbe:#d5c7b2;
-  --linienfarbe-stark:#a89275;
-  --textfarbe:#161311;
-  --textfarbe-sanft:#665b4c;
-  --textfarbe-hell:#ddd3c8;
-  --akzent:#1c63d8;
-  --akzent-hover:#144faf;
-  --akzent-zart:#dbe6ff;
-  --dunkel:#181410;
-  --dunkel-zwei:#29211a;
-  --hell:#fffaf3;
-  --maximale-breite:1320px;
-  --radius-gross:30px;
-  --radius-mittel:18px;
-  --radius-klein:12px;
-  --schatten:0 16px 40px rgba(31, 24, 14, 0.08);
-  --schatten-stark:0 22px 50px rgba(31, 24, 14, 0.14);
-  --transition:0.2s ease;
+  --bg:#f3eee4;
+  --bg2:#e3d8c7;
+  --card:#fcf8f1;
+  --card2:#f0e6d8;
+  --text:#161311;
+  --muted:#665b4c;
+  --line:rgba(102,91,77,.14);
+  --blue:#1c63d8;
+  --blue-hover:#144faf;
+  --dark:#181410;
+  --dark2:#29211a;
+  --light:#fffaf3;
+  --max:1280px;
+  --shadow:0 14px 36px rgba(31,24,14,.08);
+  --shadow-strong:0 18px 40px rgba(31,24,14,.14);
 }
 
 *{
@@ -37,32 +29,10 @@ html{
 body{
   min-height:100vh;
   font-family:"Inter","Segoe UI",Arial,sans-serif;
-  color:var(--textfarbe);
-  background:
-    radial-gradient(circle at 10% 10%, rgba(255,255,255,0.78), transparent 0 18%),
-    radial-gradient(circle at 88% 16%, rgba(28,99,216,0.10), transparent 0 16%),
-    radial-gradient(circle at 60% 42%, rgba(255,255,255,0.34), transparent 0 13%),
-    linear-gradient(180deg, var(--seitenhintergrund) 0%, var(--seitenhintergrund-zwei) 100%);
+  font-size:1rem;
   line-height:1.55;
-}
-
-body::before{
-  content:"";
-  position:fixed;
-  inset:0;
-  pointer-events:none;
-  opacity:0.26;
-  background:
-    repeating-linear-gradient(
-      90deg,
-      transparent 0 120px,
-      rgba(22,19,17,0.022) 120px 121px
-    ),
-    repeating-linear-gradient(
-      0deg,
-      transparent 0 120px,
-      rgba(22,19,17,0.014) 120px 121px
-    );
+  color:var(--text);
+  background:linear-gradient(180deg,var(--bg),var(--bg2));
 }
 
 img,
@@ -75,7 +45,6 @@ picture{
 a{
   color:inherit;
   text-decoration:none;
-  transition:var(--transition);
 }
 
 button,
@@ -86,13 +55,48 @@ textarea{
 }
 
 button{
-  border:none;
+  border:0;
   background:none;
 }
 
 .seitenbreite{
-  width:min(95%, var(--maximale-breite));
-  margin-inline:auto;
+  width:min(94%,var(--max));
+  margin:0 auto;
+}
+
+/* gemeinsame Schriftstile */
+
+.markenname,
+.startbereich__titel,
+.veranstaltungsort_karte__titel,
+.suchbereich__titel,
+.bereichskopf__titel,
+.veranstaltungskarte__titel,
+.leerzustand__titel,
+.prozesskarte__titel{
+  font-family:"Barlow Condensed",sans-serif;
+  text-transform:uppercase;
+}
+
+.startbereich__hinweis,
+.veranstaltungsort_karte__label,
+.suchbereich__untertitel,
+.suchformular__label,
+.bereichskopf__untertitel,
+.veranstaltungskarte__kategorie{
+  font-size:.78rem;
+  font-weight:800;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+}
+
+.startbereich__beschreibung,
+.suchbereich__info,
+.veranstaltungskarte__beschreibung,
+.leerzustand__text,
+.prozesskarte__text,
+.seitenfuss{
+  color:var(--muted);
 }
 
 /* Header */
@@ -101,9 +105,8 @@ button{
   position:sticky;
   top:0;
   z-index:100;
-  background:rgba(248, 242, 233, 0.84);
-  backdrop-filter:blur(14px);
-  border-bottom:1px solid rgba(102, 91, 76, 0.12);
+  background:rgba(248,242,233,.92);
+  border-bottom:1px solid var(--line);
 }
 
 .seitenkopf__leiste{
@@ -115,12 +118,9 @@ button{
 }
 
 .markenname{
-  font-family:"Barlow Condensed",sans-serif;
   font-size:2rem;
   font-weight:800;
-  letter-spacing:0.02em;
-  text-transform:uppercase;
-  color:var(--textfarbe);
+  letter-spacing:.02em;
 }
 
 .hauptnavigation{
@@ -131,65 +131,35 @@ button{
 }
 
 .hauptnavigation__link{
-  color:var(--textfarbe-sanft);
+  color:var(--muted);
   font-weight:700;
-  font-size:0.95rem;
+  font-size:.95rem;
 }
 
 .hauptnavigation__link:hover{
-  color:var(--textfarbe);
+  color:var(--text);
 }
 
 /* Hero */
 
 .startbereich{
   padding:40px 0 30px;
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0)),
-    var(--bereich-hintergrund);
-  border-bottom:1px solid rgba(102, 91, 77, 0.14);
-  position:relative;
-  overflow:hidden;
-}
-
-.startbereich::before{
-  content:"";
-  position:absolute;
-  left:-140px;
-  top:140px;
-  width:360px;
-  height:360px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(255,255,255,0.52), transparent 62%);
-  pointer-events:none;
-}
-
-.startbereich::after{
-  content:"";
-  position:absolute;
-  right:-140px;
-  top:20px;
-  width:340px;
-  height:340px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(28,99,216,0.08), transparent 62%);
-  pointer-events:none;
+  background:#f8f2e9;
+  border-bottom:1px solid var(--line);
 }
 
 .startbereich__inhalt{
   display:grid;
-  grid-template-columns:minmax(0, 1.35fr) minmax(340px, 0.85fr);
-  gap:26px;
+  grid-template-columns:1.35fr .85fr;
+  gap:24px;
   align-items:start;
-  margin-bottom:26px;
-  position:relative;
-  z-index:1;
+  margin-bottom:24px;
 }
 
 .startbereich__textblock{
   display:grid;
-  grid-template-columns:minmax(0, 1fr) minmax(240px, 0.52fr);
-  gap:18px 28px;
+  grid-template-columns:1fr .55fr;
+  gap:18px 24px;
   align-items:start;
 }
 
@@ -201,182 +171,97 @@ button{
   min-height:38px;
   padding:0 14px;
   border-radius:999px;
-  background:rgba(255,255,255,0.62);
-  border:1px solid rgba(102, 91, 77, 0.14);
-  color:var(--textfarbe-sanft);
-  font-size:0.76rem;
-  font-weight:800;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
-  margin-bottom:2px;
+  background:rgba(255,255,255,.65);
+  border:1px solid var(--line);
+  color:var(--muted);
 }
 
 .startbereich__titel{
-  grid-column:1 / 2;
-  font-family:"Barlow Condensed",sans-serif;
-  font-size:clamp(3.3rem, 6vw, 6.1rem);
-  line-height:0.85;
-  letter-spacing:-0.04em;
-  text-transform:uppercase;
-  max-width:7.8ch;
-  margin-bottom:0;
+  font-size:clamp(3.2rem,6vw,5.8rem);
+  line-height:.86;
+  letter-spacing:-.04em;
+  max-width:8ch;
 }
 
 .startbereich__beschreibung{
-  grid-column:2 / 3;
   align-self:end;
   max-width:28ch;
-  color:var(--textfarbe-sanft);
-  font-size:1rem;
-  line-height:1.7;
-  margin-top:22px;
-  padding:20px 22px;
-  background:rgba(255,255,255,0.40);
-  border:1px solid rgba(102, 91, 77, 0.12);
-  border-radius:22px;
-  box-shadow:var(--schatten);
+  padding:18px 20px;
+  margin-top:20px;
+  background:rgba(255,255,255,.45);
+  border:1px solid rgba(102,91,77,.12);
+  border-radius:20px;
+  box-shadow:var(--shadow);
 }
-
-/* Venue card */
 
 .veranstaltungsort_karte{
-  position:relative;
-  overflow:hidden;
-  background:linear-gradient(135deg, var(--dunkel) 0%, var(--dunkel-zwei) 100%);
-  color:var(--hell);
-  border-radius:var(--radius-gross);
-  padding:28px;
+  background:linear-gradient(135deg,var(--dark),var(--dark2));
+  color:var(--light);
+  border-radius:28px;
+  padding:26px;
   min-height:100%;
-  box-shadow:var(--schatten-stark);
-}
-
-.veranstaltungsort_karte::before{
-  content:"";
-  position:absolute;
-  right:-30px;
-  bottom:-30px;
-  width:190px;
-  height:190px;
-  border:1px solid rgba(255,255,255,0.12);
-  border-radius:50%;
-}
-
-.veranstaltungsort_karte::after{
-  content:"";
-  position:absolute;
-  left:18px;
-  top:18px;
-  width:52px;
-  height:52px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(255,255,255,0.08), transparent 72%);
+  box-shadow:var(--shadow-strong);
 }
 
 .veranstaltungsort_karte__label{
   display:block;
   color:#c8bcad;
-  font-size:0.76rem;
-  font-weight:800;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
   margin-bottom:10px;
-  position:relative;
-  z-index:1;
 }
 
 .veranstaltungsort_karte__titel{
-  position:relative;
-  z-index:1;
-  font-family:"Barlow Condensed",sans-serif;
-  font-size:2.2rem;
-  line-height:0.9;
-  letter-spacing:-0.03em;
-  text-transform:uppercase;
+  font-size:2.15rem;
+  line-height:.9;
+  letter-spacing:-.03em;
   margin-bottom:14px;
 }
 
-.veranstaltungsort_karte__text{
-  position:relative;
-  z-index:1;
-  color:var(--textfarbe-hell);
-  max-width:28ch;
-  font-size:1rem;
+.veranstaltungsort_karte p{
+  color:#ddd3c8;
+  max-width:30ch;
   line-height:1.65;
 }
 
-/* Search */
+/* Suche */
 
 .suchbereich{
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.48), rgba(255,255,255,0.18)),
-    var(--kartenflaeche);
-  border:1px solid rgba(102, 91, 77, 0.16);
-  border-radius:32px;
-  padding:32px;
-  box-shadow:var(--schatten);
-  position:relative;
-  overflow:hidden;
-}
-
-.suchbereich::before{
-  content:"";
-  position:absolute;
-  inset:auto auto -80px -80px;
-  width:220px;
-  height:220px;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(28,99,216,0.08), transparent 64%);
-}
-
-.suchbereich::after{
-  content:"";
-  position:absolute;
-  inset:16px;
-  border-radius:22px;
-  border:1px dashed rgba(102, 91, 77, 0.10);
-  pointer-events:none;
+  background:var(--card);
+  border:1px solid rgba(102,91,77,.16);
+  border-radius:26px;
+  padding:28px;
+  box-shadow:var(--shadow);
 }
 
 .suchbereich__kopf{
   display:grid;
-  grid-template-columns:1.15fr 0.85fr;
+  grid-template-columns:1.1fr .9fr;
   gap:20px;
   align-items:end;
-  margin-bottom:24px;
-  position:relative;
-  z-index:1;
+  margin-bottom:22px;
 }
 
-.suchbereich__untertitel{
-  font-size:0.76rem;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  color:var(--textfarbe-sanft);
+.suchbereich__untertitel,
+.bereichskopf__untertitel{
   margin-bottom:8px;
+  color:var(--muted);
 }
 
 .suchbereich__titel{
-  font-family:"Barlow Condensed",sans-serif;
-  font-size:clamp(2rem, 4vw, 3.2rem);
-  line-height:0.9;
-  letter-spacing:-0.03em;
-  text-transform:uppercase;
+  font-size:clamp(2rem,4vw,3rem);
+  line-height:.9;
+  letter-spacing:-.03em;
   max-width:12ch;
 }
 
 .suchbereich__info{
-  color:var(--textfarbe-sanft);
   max-width:54ch;
 }
 
 .suchformular{
   display:grid;
-  grid-template-columns:2.7fr 1fr 1fr auto;
+  grid-template-columns:2.5fr 1fr 1fr auto;
   gap:14px;
   align-items:end;
-  position:relative;
-  z-index:1;
 }
 
 .suchformular__feldgruppe{
@@ -386,31 +271,26 @@ button{
 }
 
 .suchformular__label{
-  font-size:0.76rem;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  color:var(--textfarbe-sanft);
+  color:var(--muted);
 }
 
 .suchformular__eingabe,
 .suchformular__auswahl,
 .suchformular__festwert{
   width:100%;
-  min-height:64px;
-  border:1px solid rgba(102, 91, 77, 0.16);
-  background:rgba(255,253,249,0.94);
-  border-radius:16px;
+  min-height:60px;
   padding:0 16px;
-  color:var(--textfarbe);
-  box-shadow:inset 0 1px 0 rgba(255,255,255,0.78);
+  border:1px solid rgba(102,91,77,.16);
+  border-radius:14px;
+  background:#fffdf9;
+  color:var(--text);
 }
 
 .suchformular__eingabe:focus,
 .suchformular__auswahl:focus{
   outline:none;
   border-color:#8aa7de;
-  background:#ffffff;
+  background:#fff;
 }
 
 .suchformular__festwert{
@@ -428,43 +308,44 @@ button{
 /* Buttons */
 
 .schaltflaeche{
-  min-height:64px;
-  padding:0 22px;
-  border-radius:16px;
+  min-height:60px;
+  padding:0 20px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  font-weight:800;
   border:1px solid transparent;
-  cursor:pointer;
-  transition:var(--transition);
+  border-radius:14px;
+  font-weight:800;
   white-space:nowrap;
-}
-
-.schaltflaeche:hover{
-  transform:translateY(-1px);
+  cursor:pointer;
 }
 
 .schaltflaeche--primaer{
-  background:var(--akzent);
+  background:var(--blue);
   color:#fff;
 }
 
 .schaltflaeche--primaer:hover{
-  background:var(--akzent-hover);
+  background:var(--blue-hover);
 }
 
 .schaltflaeche--sekundaer{
-  background:rgba(255,255,255,0.44);
-  color:var(--textfarbe);
-  border-color:rgba(102, 91, 77, 0.16);
+  background:rgba(255,255,255,.55);
+  color:var(--text);
+  border-color:rgba(102,91,77,.16);
 }
 
 .schaltflaeche--sekundaer:hover{
-  background:rgba(255,255,255,0.74);
+  background:rgba(255,255,255,.78);
 }
 
-/* Event section */
+.schaltflaeche--deaktiviert{
+  opacity:.65;
+  cursor:default;
+  pointer-events:none;
+}
+
+/* Events */
 
 .eventuebersicht{
   padding:40px 0 34px;
@@ -479,55 +360,36 @@ button{
   margin-bottom:22px;
 }
 
-.bereichskopf__untertitel{
-  font-size:0.76rem;
-  font-weight:800;
-  text-transform:uppercase;
-  letter-spacing:0.1em;
-  color:var(--textfarbe-sanft);
-  margin-bottom:8px;
-}
-
 .bereichskopf__titel{
-  font-family:"Barlow Condensed",sans-serif;
-  font-size:clamp(2rem, 4vw, 3rem);
-  line-height:0.9;
-  letter-spacing:-0.03em;
-  text-transform:uppercase;
+  font-size:clamp(2rem,4vw,2.9rem);
+  line-height:.9;
+  letter-spacing:-.03em;
 }
 
 .bereichskopf__ergebniszahl{
-  color:var(--textfarbe-sanft);
-  font-weight:700;
   padding:10px 14px;
-  background:rgba(255,255,255,0.42);
-  border:1px solid rgba(102, 91, 77, 0.12);
   border-radius:999px;
+  background:rgba(255,255,255,.45);
+  border:1px solid rgba(102,91,77,.12);
+  color:var(--muted);
+  font-weight:700;
 }
 
 .eventuebersicht__raster{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:18px;
 }
 
 .veranstaltungskarte{
-  background:
-    linear-gradient(180deg, rgba(255,255,255,0.38), rgba(255,255,255,0.08)),
-    var(--kartenflaeche);
-  border:1px solid rgba(102, 91, 77, 0.16);
-  border-radius:26px;
-  overflow:hidden;
-  box-shadow:var(--schatten);
   display:flex;
   flex-direction:column;
   min-height:100%;
-  transition:transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.veranstaltungskarte:hover{
-  transform:translateY(-3px);
-  box-shadow:0 20px 42px rgba(31,24,14,0.12);
+  overflow:hidden;
+  background:var(--card);
+  border:1px solid rgba(102,91,77,.16);
+  border-radius:24px;
+  box-shadow:var(--shadow);
 }
 
 .veranstaltungskarte[hidden]{
@@ -540,75 +402,39 @@ button{
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  position:relative;
-  overflow:hidden;
-  border-bottom:1px solid rgba(102, 91, 77, 0.12);
-}
-
-.veranstaltungskarte__bildbereich::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,0.08), rgba(0,0,0,0.20)),
-    radial-gradient(circle at top left, rgba(255,255,255,0.16), transparent 36%);
-}
-
-.veranstaltungskarte__bildbereich::after{
-  content:"";
-  position:absolute;
-  right:18px;
-  bottom:18px;
-  width:62px;
-  height:62px;
-  border-radius:50%;
-  border:1px solid rgba(255,255,255,0.14);
-}
-
-.veranstaltungskarte__bildbereich > *{
-  position:relative;
-  z-index:1;
+  border-bottom:1px solid rgba(102,91,77,.12);
 }
 
 .veranstaltungskarte__bildbereich--nachtblau{
-  background:linear-gradient(180deg, #476189 0%, #223145 100%);
+  background:linear-gradient(180deg,#476189,#223145);
 }
 
 .veranstaltungskarte__bildbereich--bordeaux{
-  background:linear-gradient(180deg, #7c4851 0%, #3a1f25 100%);
+  background:linear-gradient(180deg,#7c4851,#3a1f25);
 }
 
 .veranstaltungskarte__bildbereich--dunkelgrau{
-  background:linear-gradient(180deg, #767068 0%, #312d28 100%);
+  background:linear-gradient(180deg,#767068,#312d28);
 }
 
 .veranstaltungskarte__bildbereich--oliv{
-  background:linear-gradient(180deg, #7a7e58 0%, #3b3d2b 100%);
+  background:linear-gradient(180deg,#7a7e58,#3b3d2b);
 }
 
 .veranstaltungskarte__kategorie{
   align-self:flex-start;
   padding:8px 12px;
   border-radius:999px;
-  border:1px solid rgba(255,255,255,0.18);
-  background:rgba(255,255,255,0.08);
+  background:rgba(255,255,255,.14);
   color:#fff8f1;
-  font-size:0.75rem;
-  font-weight:800;
-  letter-spacing:0.08em;
-  text-transform:uppercase;
 }
 
 .veranstaltungskarte__titel{
   max-width:9ch;
-  font-family:"Barlow Condensed",sans-serif;
-  font-size:clamp(2.25rem, 3vw, 3rem);
-  line-height:0.86;
-  letter-spacing:-0.04em;
-  text-transform:uppercase;
+  font-size:clamp(2.1rem,3vw,2.9rem);
+  line-height:.86;
+  letter-spacing:-.04em;
   color:#fff8f1;
-  text-wrap:balance;
-  text-shadow:0 4px 14px rgba(0,0,0,0.16);
 }
 
 .veranstaltungskarte__inhalt{
@@ -619,57 +445,47 @@ button{
 }
 
 .veranstaltungskarte__beschreibung{
-  color:var(--textfarbe-sanft);
-  font-size:0.95rem;
+  font-size:.95rem;
   min-height:44px;
 }
 
-.veranstaltungskarte__meta{
-  display:flex;
-  flex-wrap:wrap;
-  gap:10px;
-}
-
-.veranstaltungskarte__meta span{
-  display:inline-flex;
-  align-items:center;
-  min-height:34px;
-  padding:0 12px;
-  border-radius:999px;
-  background:var(--kartenflaeche-zwei);
-  color:#5b5145;
-  font-size:0.84rem;
-  font-weight:800;
-}
-
+.veranstaltungskarte__meta,
 .vorstellungszeiten{
   display:flex;
   flex-wrap:wrap;
   gap:10px;
 }
 
-.vorstellungszeiten__eintrag{
-  min-height:40px;
-  padding:0 14px;
+.veranstaltungskarte__meta span,
+.vorstellungszeiten__eintrag,
+.vorstellungszeiten__leer{
   display:inline-flex;
   align-items:center;
   justify-content:center;
   border-radius:999px;
-  background:rgba(255,255,255,0.45);
-  border:1px solid rgba(102, 91, 77, 0.14);
-  color:#2f2821;
-  font-size:0.88rem;
   font-weight:800;
+}
+
+.veranstaltungskarte__meta span{
+  min-height:34px;
+  padding:0 12px;
+  background:var(--card2);
+  color:#5b5145;
+  font-size:.84rem;
+}
+
+.vorstellungszeiten__eintrag,
+.vorstellungszeiten__leer{
+  min-height:40px;
+  padding:0 14px;
+  background:rgba(255,255,255,.45);
+  border:1px solid rgba(102,91,77,.14);
+  color:#2f2821;
+  font-size:.88rem;
 }
 
 .vorstellungszeiten__eintrag:hover{
   background:#efe8dd;
-}
-
-.vorstellungszeiten__eintrag.ist-ausgewaehlt{
-  background:var(--dunkel);
-  border-color:var(--dunkel);
-  color:var(--hell);
 }
 
 .veranstaltungskarte__aktionen{
@@ -679,32 +495,29 @@ button{
   margin-top:2px;
 }
 
-/* Empty state */
+/* Leerzustand */
 
 .leerzustand{
-  background:rgba(255,255,255,0.42);
-  border:1px solid rgba(102, 91, 77, 0.16);
-  border-radius:24px;
   padding:34px;
   text-align:center;
-  box-shadow:var(--schatten);
+  background:rgba(255,255,255,.42);
+  border:1px solid rgba(102,91,77,.16);
+  border-radius:24px;
+  box-shadow:var(--shadow);
 }
 
 .leerzustand__titel{
-  font-family:"Barlow Condensed",sans-serif;
   font-size:2rem;
-  line-height:0.9;
-  letter-spacing:-0.03em;
-  text-transform:uppercase;
+  line-height:.9;
+  letter-spacing:-.03em;
   margin-bottom:8px;
 }
 
 .leerzustand__text{
-  color:var(--textfarbe-sanft);
   margin-bottom:16px;
 }
 
-/* Steps */
+/* Prozess */
 
 .prozesshinweise{
   padding:0 0 42px;
@@ -712,38 +525,31 @@ button{
 
 .prozesshinweise__raster{
   display:grid;
-  grid-template-columns:repeat(3, 1fr);
+  grid-template-columns:repeat(3,1fr);
   gap:16px;
 }
 
 .prozesskarte{
-  background:rgba(255,255,255,0.36);
-  border:1px solid rgba(102, 91, 77, 0.14);
-  border-radius:18px;
   padding:18px;
-  box-shadow:var(--schatten);
+  background:rgba(255,255,255,.36);
+  border:1px solid rgba(102,91,77,.14);
+  border-radius:18px;
+  box-shadow:var(--shadow);
 }
 
 .prozesskarte__titel{
-  font-family:"Barlow Condensed",sans-serif;
   font-size:1.45rem;
-  line-height:0.94;
-  letter-spacing:-0.02em;
-  text-transform:uppercase;
+  line-height:.94;
+  letter-spacing:-.02em;
   margin-bottom:8px;
-}
-
-.prozesskarte__text{
-  color:var(--textfarbe-sanft);
 }
 
 /* Footer */
 
 .seitenfuss{
-  background:rgba(247, 242, 232, 0.80);
-  border-top:1px solid rgba(102, 91, 77, 0.14);
   padding:24px 0 40px;
-  color:var(--textfarbe-sanft);
+  background:rgba(247,242,232,.8);
+  border-top:1px solid rgba(102,91,77,.14);
 }
 
 .seitenfuss__inhalt{
@@ -755,33 +561,7 @@ button{
 
 /* Responsive */
 
-@media (max-width:1100px){
-  .startbereich__inhalt{
-    grid-template-columns:1fr;
-  }
-
-  .startbereich__textblock{
-    grid-template-columns:1fr;
-  }
-
-  .startbereich__beschreibung{
-    grid-column:auto;
-    max-width:60ch;
-    margin-top:0;
-  }
-
-  .suchbereich__kopf,
-  .eventuebersicht__raster,
-  .prozesshinweise__raster{
-    grid-template-columns:1fr;
-  }
-
-  .suchformular{
-    grid-template-columns:1fr 1fr;
-  }
-}
-
-@media (max-width:720px){
+@media (max-width:920px){
   .seitenkopf__leiste{
     min-height:auto;
     padding:14px 0;
@@ -789,20 +569,19 @@ button{
     align-items:flex-start;
   }
 
-  .hauptnavigation{
-    gap:14px;
-  }
-
-  .suchformular{
+  .startbereich__inhalt,
+  .startbereich__textblock,
+  .suchbereich__kopf,
+  .eventuebersicht__raster,
+  .prozesshinweise__raster,
+  .suchformular,
+  .veranstaltungskarte__aktionen{
     grid-template-columns:1fr;
   }
 
-  .suchformular__aktionen{
-    flex-direction:column;
-  }
-
-  .schaltflaeche{
-    width:100%;
+  .startbereich__beschreibung{
+    max-width:60ch;
+    margin-top:0;
   }
 
   .startbereich__titel{
@@ -815,7 +594,11 @@ button{
     font-size:2.1rem;
   }
 
-  .veranstaltungskarte__aktionen{
-    grid-template-columns:1fr;
+  .suchformular__aktionen{
+    flex-direction:column;
+  }
+
+  .schaltflaeche{
+    width:100%;
   }
 }
