@@ -46,9 +46,9 @@ $events = [
     ],
     [
         'id' => 4,
-        'title' => 'HTL Leonding Presentation',
+        'title' => 'HTL Leonding Praesentation',
         'category' => 'Kino',
-        'description' => 'Ein visuelles Spektakel aus der Schule. Für Kunstliebhaber und Schüler.',
+        'description' => 'Ein visuelles Spektakel aus der Schule. Für Kunstliebhaber und Schüler und kustliehabende Schüler und Küstler die mal in der Schule waren.',
         'price' => 12.50,
         'theme' => 'oliv',
         'shows' => [
