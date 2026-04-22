@@ -74,8 +74,6 @@ function getEventById($eventId) {
     global $events;
 
     foreach ($events as $event) {
-        // hilfe von ki: sicherer Vergleich wäre auch mit (int) möglich,
-        // hier reicht == aber für deine aktuelle Struktur
         if ($event['id'] == $eventId) {
             return $event;
         }
@@ -95,6 +93,5 @@ function getShowById($showId) {
             }
         }
     }
-
     return null;
 }
