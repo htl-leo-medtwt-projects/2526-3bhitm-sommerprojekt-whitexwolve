@@ -29,16 +29,7 @@ function lower_text($value): string
     <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
-    <header class="seitenkopf">
-        <div class="seitenbreite seitenkopf__leiste">
-            <a href="index.php" class="markenname">VibeSeat</a>
-
-            <nav class="hauptnavigation" aria-label="Hauptnavigation">
-                <a class="hauptnavigation__link" href="#events">Events</a>
-                <a class="hauptnavigation__link" href="#prozess">Ablauf</a>
-            </nav>
-        </div>
-    </header>
+    <?php require_once __DIR__ . '/partials/site-header.php'; ?>
 
     <main>
         <section class="startbereich">
@@ -251,12 +242,7 @@ function lower_text($value): string
         </section>
     </main>
 
-    <footer class="seitenfuss">
-        <div class="seitenbreite seitenfuss__inhalt">
-            <p>© <?= date('Y') ?> VibeSeat</p>
-            <p>Reservierungsdauer: <?= (int) RESERVATION_TIMEOUT_MINUTES ?> Minuten</p>
-        </div>
-    </footer>
+    <?php require_once __DIR__ . '/partials/site-footer.php'; ?>
 
     <script src="assets/js/main.js"></script>
 </body>

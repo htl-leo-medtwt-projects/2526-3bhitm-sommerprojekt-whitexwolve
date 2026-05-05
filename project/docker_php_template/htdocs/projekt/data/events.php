@@ -1,13 +1,11 @@
 <?php
 
-// Einfache Konfiguration für die Halle
 define('HALL_NAME', 'VibeSeat Hall');
 define('RESERVATION_TIMEOUT_MINUTES', 10);
 
-// Einfache Event-Liste
 $events = [
     [
-        'id' => 1,
+        'eventid' => 1,
         'title' => 'Starlight Cinema Night',
         'category' => 'Kino',
         'description' => 'Ein inspirierender Film mit atemberaubenden Bildern. Perfekt für alle, die gute Filmkunst schätzen.',
@@ -20,7 +18,7 @@ $events = [
         ]
     ],
     [
-        'id' => 2,
+        'eventid' => 2,
         'title' => 'John Pork Live',
         'category' => 'Konzert',
         'description' => 'Ein energiegeladenes Konzerterlebnis mit den Top-Hits. Perfekt für Musikliebhaber.',
@@ -32,7 +30,7 @@ $events = [
         ]
     ],
     [
-        'id' => 3,
+        'eventid' => 3,
         'title' => 'Brainrot Theater',
         'category' => 'Theater',
         'description' => 'Ein provokantes Theaterstück, das zum Nachdenken anregt. Für Kulturbegeisterte.',
@@ -45,7 +43,7 @@ $events = [
         ]
     ],
     [
-        'id' => 4,
+        'eventid' => 4,
         'title' => 'HTL Leonding Praesentation',
         'category' => 'Kino',
         'description' => 'Ein visuelles Spektakel aus der Schule. Für Kunstliebhaber und Schüler und kustliehabende Schüler und Küstler die mal in der Schule waren.',
@@ -57,7 +55,7 @@ $events = [
         ]
     ],
     [
-        'id' => 5,
+        'eventid' => 5,
         'title' => 'Moonlight Cinema Night',
         'category' => 'Kino',
         'description' => 'Ein stilvoller Filmabend unter dem Mond. Perfekt zum Entspannen und Genießen.',
@@ -74,7 +72,7 @@ function getEventById($eventId) {
     global $events;
 
     foreach ($events as $event) {
-        if ($event['id'] == $eventId) {
+        if ($event['eventid'] == $eventId) {
             return $event;
         }
     }

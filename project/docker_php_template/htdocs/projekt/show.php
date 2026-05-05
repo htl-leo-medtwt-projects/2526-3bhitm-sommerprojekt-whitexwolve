@@ -32,16 +32,7 @@ if ($show) {
     <link rel="stylesheet" href="assets/css/show.css">
 </head>
 <body>
-    <header class="seitenkopf">
-        <div class="seitenbreite seitenkopf__leiste">
-            <a href="index.php" class="markenname">VibeSeat</a>
-
-            <nav class="hauptnavigation" aria-label="Hauptnavigation">
-                <a class="hauptnavigation__link" href="index.php#events">Events</a>
-                <a class="hauptnavigation__link" href="index.php#prozess">Ablauf</a>
-            </nav>
-        </div>
-    </header>
+<?php require_once __DIR__ . '/partials/site-header.php'; ?>
 
     <main class="show">
         <div class="seitenbreite">
@@ -59,7 +50,7 @@ if ($show) {
                         <?= esc($event['description']) ?>
                     </p>
 
-                    <a class="schaltflaeche schaltflaeche--primaer" href="seat.php?show=<?= $showId ?>">
+                    <a class="schaltflaeche schaltflaeche--primaer" href="vibe.php?show=<?= $showId ?>">
                         Sitzplätze auswählen
                     </a>
                 </section>
@@ -71,6 +62,8 @@ if ($show) {
                 </section>
             <?php endif; ?>
         </div>
+      
     </main>
+      <?php require_once __DIR__ . '/partials/site-footer.php'; ?>
 </body>
 </html>

@@ -1,7 +1,7 @@
-# Access Server: http://localhost:8050
+# Access Server: http://localhost:8080
 # Files: ./htdocs
 
-# Access phpMyAdmin: http://localhost:8051
+# Access phpMyAdmin: http://localhost:8081
 # Username: root
 # Password: rootpassword
 
@@ -16,42 +16,40 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: php-app-skateforge
+    container_name: php-app
     volumes:
       - ./htdocs:/var/www/html
     ports:
-      - "8050:80"
+      - "8080:80"
     depends_on:
       - db_server
     networks:
       - docker_php_network
+ 
 
   db_server:
     image: mysql:latest
-    container_name: mysql-db-skateforge
-    restart: always
+    container_name: mysql-db
+    restart: no
     environment:
       MYSQL_ROOT_PASSWORD: rootpassword
     volumes:
       - db_data:/var/lib/mysql
     networks:
       - docker_php_network
-
-  phpmyadmin:
-    image: phpmyadmin/phpmyadmin:latest
-    container_name: phpmyadmin-skateforge
-    environment:
-      PMA_HOST: db_server
-      MYSQL_ROOT_PASSWORD: rootpassword
+ 
+  adminer:
+    image: adminer:latest
+    container_name: adminer
     ports:
-      - "8051:80"
+      - "8081:8080"
     depends_on:
       - db_server
     networks:
       - docker_php_network
-
+ 
 volumes:
   db_data:
-
+ 
 networks:
   docker_php_network:

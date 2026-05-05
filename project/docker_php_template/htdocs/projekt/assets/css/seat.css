@@ -1,0 +1,250 @@
+
+.seat-page {
+  padding: 40px 0 64px;
+}
+
+/* Kontext */
+.seat-kontext { margin-bottom: 20px; }
+
+.seat-kontext__zurueck {
+  display: inline-block;
+  margin-bottom: 8px;
+  color: var(--muted);
+  font-weight: 700;
+  font-size: .9rem;
+  transition: color .18s;
+}
+.seat-kontext__zurueck:hover { color: var(--text); }
+
+.seat-kontext__info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  font-weight: 700;
+}
+.seat-kontext__trenner { color: var(--muted); }
+
+/* Empfehlung-Banner */
+.empfehlung-banner {
+  background: #f0f5ff;
+  border: 1px solid rgba(28,99,216,.2);
+  border-radius: 14px;
+  padding: 14px 20px;
+  margin-bottom: 20px;
+  font-size: .92rem;
+  color: #1c4a9e;
+}
+
+/* Layout */
+.seat-layout {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Box */
+.seat-box, .legend-box {
+  background: #fcf8f1;
+  border: 1px solid rgba(102,91,77,.14);
+  border-radius: 22px;
+  padding: 28px;
+}
+
+/* Leinwand */
+.screen {
+  text-align: center;
+  background: rgba(102,91,77,.08);
+  padding: 10px;
+  border-radius: 10px;
+  margin: 20px 0;
+  font-weight: 800;
+  font-size: .75rem;
+  letter-spacing: .1em;
+  color: var(--muted);
+}
+
+/* Reihen */
+.seat-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seat-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.seat-row__label {
+  font-size: .72rem;
+  font-weight: 800;
+  letter-spacing: .08em;
+  color: var(--muted);
+  width: 16px;
+  text-align: center;
+  flex-shrink: 0;
+}
+
+.seat-row__seats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+/* Einzelner Sitz */
+.seat {
+  width: 44px;
+  height: 44px;
+  border: 1px solid rgba(102,91,77,.18);
+  border-radius: 10px;
+  font-weight: 800;
+  font-size: .65rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: transform .12s, box-shadow .15s, border-color .15s;
+}
+
+.seat:not([disabled]):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(31,24,14,.1);
+}
+
+/* Tier-Farben (freie Sitze) */
+.seat--free.seat--tier-top  { background: #d4f5d4; border-color: #7bc87b; }
+.seat--free.seat--tier-ok   { background: #fff4cc; border-color: #e0c45a; }
+.seat--free.seat--tier-low  { background: #ebebeb; border-color: #ccc; color: #999; }
+
+/* Empfohlene Sitze extra hervorgehoben */
+.seat--empfohlen {
+  box-shadow: 0 0 0 2px #1c63d8;
+  border-color: #1c63d8 !important;
+}
+
+/* Belegt */
+.seat--taken {
+  background: #e8e5e0;
+  border-color: rgba(102,91,77,.12);
+  color: #bbb;
+  cursor: not-allowed;
+}
+
+/* Ausgewählt */
+.seat--selected {
+  background: #1c63d8 !important;
+  border-color: #1c63d8 !important;
+  color: #fff !important;
+  box-shadow: 0 4px 14px rgba(28,99,216,.3);
+}
+
+/* Aktionszeile */
+.seat-aktionen {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 24px;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(102,91,77,.1);
+}
+
+.seat-auswahl-info {
+  color: var(--muted);
+  font-weight: 700;
+  font-size: .9rem;
+}
+
+/* Legende */
+.legend-box h2 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.1rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+  margin-bottom: 12px;
+}
+
+.legend-box hr {
+  margin: 16px 0;
+  border: 0;
+  border-top: 1px solid rgba(102,91,77,.1);
+}
+
+.legend-box p {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: .88rem;
+  margin-bottom: 8px;
+}
+
+.legend-color {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 4px;
+  flex-shrink: 0;
+}
+
+.legend-top    { background: #d4f5d4; border: 1px solid #7bc87b; }
+.legend-ok     { background: #fff4cc; border: 1px solid #e0c45a; }
+.legend-low    { background: #ebebeb; border: 1px solid #ccc; }
+.legend-taken  { background: #e8e5e0; border: 1px solid rgba(102,91,77,.2); }
+.legend-selected { background: #1c63d8; }
+
+/* Auswahl-Liste */
+.seat-liste {
+  list-style: none;
+  margin-top: 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.seat-liste li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: .82rem;
+  gap: 6px;
+}
+
+.seat-liste__id    { font-weight: 800; }
+.seat-liste__score { color: var(--muted); }
+.seat-liste__preis { font-weight: 700; }
+.seat-liste__leer  { color: var(--muted); font-size: .88rem; }
+
+/* Vibe Tags */
+.legend-vibes { margin-top: 4px; }
+
+.legend-vibes h2 {
+  margin-bottom: 10px;
+}
+
+.vibe-tag {
+  display: inline-block;
+  background: #f0f5ff;
+  border: 1px solid rgba(28,99,216,.2);
+  color: #1c4a9e;
+  border-radius: 20px;
+  padding: 3px 10px;
+  font-size: .75rem;
+  font-weight: 700;
+  margin: 0 4px 4px 0;
+  text-transform: capitalize;
+}
+
+.legend-leer { color: var(--muted); font-size: .85rem; }
+
+/* Responsive */
+@media (max-width: 760px) {
+  .seat-layout { grid-template-columns: 1fr; }
+  .seat { width: 36px; height: 36px; font-size: .6rem; }
+}
+
+/* Aufgrund vom Rückstand im Projekt, wurde primär mit KI entwickelt und eigenständig verfeinert. */

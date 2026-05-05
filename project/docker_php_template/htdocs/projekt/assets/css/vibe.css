@@ -1,0 +1,337 @@
+.vibe-page {
+  padding: 48px 0 64px;
+}
+
+/* Kontext-Zeile */
+.vibe-kontext {
+  margin-bottom: 32px;
+}
+
+.vibe-kontext__zurueck {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 10px;
+  color: var(--muted);
+  font-weight: 600;
+  font-size: .88rem;
+  letter-spacing: .02em;
+  transition: color .18s;
+}
+
+.vibe-kontext__zurueck:hover { color: var(--text); }
+
+.vibe-kontext__info {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+  font-weight: 700;
+  font-size: 1.05rem;
+}
+
+.trenner { 
+    color: var(--muted); 
+}
+
+/* Haupt-Layout */
+.vibe-layout {
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  gap: 28px;
+  align-items: start;
+}
+
+/* Formular-Box */
+.vibe-formular {
+  background: #fcf8f1;
+  border: 1px solid rgba(102,91,77,.14);
+  border-radius: 22px;
+  padding: 36px;
+}
+
+/* Gradient-Trennlinie zwischen Gruppen */
+.vibe-gruppe {
+  padding-top: 28px;
+  border-top: 1px solid rgba(102,91,77,.1);
+  margin-top: 4px;
+}
+
+.vibe-titel {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: clamp(2.2rem, 5vw, 3.4rem);
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -.03em;
+  line-height: .9;
+  margin-bottom: 10px;
+}
+
+.vibe-untertitel {
+  color: var(--muted);
+  font-size: .95rem;
+  margin-bottom: 32px;
+  max-width: 48ch;
+}
+
+/* Label */
+.vibe-label {
+  display: block;
+  font-weight: 800;
+  font-size: .72rem;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+
+/* Anzahl-Stepper */
+.vibe-anzahl {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  width: fit-content;
+  border: 1px solid rgba(102,91,77,.18);
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.anzahl-btn {
+  width: 48px;
+  height: 52px;
+  font-size: 1.3rem;
+  font-weight: 500;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  color: var(--text);
+  transition: background .15s;
+}
+
+.anzahl-btn:hover { 
+    background: rgba(102,91,77,.06); 
+}
+
+.anzahl-input {
+  width: 64px;
+  height: 52px;
+  text-align: center;
+  border: none;
+  border-left: 1px solid rgba(102,91,77,.12);
+  border-right: 1px solid rgba(102,91,77,.12);
+  font-size: 1.05rem;
+  font-weight: 800;
+  background: transparent;
+  color: var(--text);
+  outline: none;
+  -moz-appearance: textfield;
+}
+
+.anzahl-input::-webkit-outer-spin-button,
+.anzahl-input::-webkit-inner-spin-button { -webkit-appearance: none; }
+
+/* Vibe-Optionen Grid */
+.vibe-optionen {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.vibe-option { display: block; }
+.vibe-option input { position: absolute; opacity: 0; pointer-events: none; }
+
+.vibe-option__box {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 16px 18px;
+  border: 1px solid rgba(102,91,77,.16);
+  border-radius: 16px;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color .18s, background .18s, box-shadow .18s;
+}
+
+.vibe-option__box:hover {
+  border-color: rgba(102,91,77,.3);
+  box-shadow: 0 4px 14px rgba(31,24,14,.06);
+}
+
+.vibe-option input:checked + .vibe-option__box {
+  border-color: #1c63d8;
+  background: #f0f5ff;
+  box-shadow: 0 4px 14px rgba(28,99,216,.1);
+}
+
+/* Kleiner farbiger Punkt statt Emoji */
+.vibe-option__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(102,91,77,.25);
+  margin-bottom: 6px;
+  transition: background .18s;
+}
+
+.vibe-option input:checked + .vibe-option__box .vibe-option__dot {
+  background: #1c63d8;
+}
+
+.vibe-option__text {
+  font-weight: 800;
+  font-size: .92rem;
+  letter-spacing: .01em;
+}
+
+.vibe-option__sub {
+  font-size: .78rem;
+  color: var(--muted);
+  line-height: 1.4;
+}
+
+/* Modus-Auswahl */
+.vibe-modus {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+
+.vibe-modus__option { 
+    display: block; 
+}
+.vibe-modus__option input { 
+    position: absolute; opacity: 0; pointer-events: none; 
+}
+
+.vibe-modus__box {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 18px;
+  border: 1px solid rgba(102,91,77,.16);
+  border-radius: 16px;
+  cursor: pointer;
+  background: #fff;
+  transition: border-color .18s, box-shadow .18s;
+}
+
+.vibe-modus__box:hover {
+  border-color: rgba(102,91,77,.3);
+  box-shadow: 0 4px 14px rgba(31,24,14,.06);
+}
+
+.vibe-modus__option input:checked + .vibe-modus__box {
+  border-color: #1c63d8;
+  background: #f0f5ff;
+  box-shadow: 0 4px 14px rgba(28,99,216,.1);
+}
+
+.vibe-modus__indicator {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid rgba(102,91,77,.25);
+  flex-shrink: 0;
+  transition: border-color .18s, background .18s;
+}
+
+.vibe-modus__option input:checked + .vibe-modus__box + .vibe-modus__indicator {
+  border-color: #1c63d8;
+  background: #1c63d8;
+  box-shadow: inset 0 0 0 3px #f0f5ff;
+}
+
+.vibe-modus__text {
+  font-weight: 700;
+  font-size: .9rem;
+}
+
+/* Submit */
+.vibe-submit {
+  width: 100%;
+  margin-top: 28px;
+  height: 56px;
+  font-size: 1rem;
+  letter-spacing: .04em;
+  border-radius: 14px;
+}
+
+/* Info-Sidebar */
+.vibe-info {
+  background: #fcf8f1;
+  border: 1px solid rgba(102,91,77,.14);
+  border-radius: 22px;
+  padding: 28px;
+  position: sticky;
+  top: 100px;
+}
+
+.vibe-info h2 {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 1.5rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -.02em;
+  margin-bottom: 18px;
+}
+
+.vibe-schritte {
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.vibe-schritte li {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(102,91,77,.08);
+  font-size: .88rem;
+  color: var(--muted);
+  line-height: 1.5;
+  counter-increment: schritt;
+}
+
+.vibe-schritte li:last-child { border-bottom: none; }
+
+.vibe-schritte li::before {
+  content: counter(schritt);
+  counter-reset: none;
+  min-width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(102,91,77,.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: .72rem;
+  font-weight: 800;
+  color: var(--text);
+  flex-shrink: 0;
+}
+
+.vibe-schritte {
+  counter-reset: schritt;
+}
+
+/* Responsive */
+@media (max-width: 860px) {
+  .vibe-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .vibe-info {
+    position: static;
+  }
+
+  .vibe-optionen,
+  .vibe-modus {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Aufgrund vom Rückstand im Projekt, wurde primär mit KI entwickelt und eigenständig verfeinert. */
