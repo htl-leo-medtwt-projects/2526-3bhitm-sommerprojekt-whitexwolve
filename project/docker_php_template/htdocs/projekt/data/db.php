@@ -6,6 +6,7 @@ $user     = 'root';
 $password = 'rootpassword';
 
 $conn = new mysqli($host, $user, $password, $dbname);
+$db = $conn;
 
 if ($conn->connect_error) {
     die('Verbindung fehlgeschlagen: ' . $conn->connect_error);

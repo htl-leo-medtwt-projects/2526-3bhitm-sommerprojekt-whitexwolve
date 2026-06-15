@@ -603,6 +603,142 @@ button{
   }
 }
 
+/* --- Nav-Avatar (Kreis im Header) --- */
+
+.nav-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(102, 91, 77, 0.20);
+  vertical-align: middle;
+  display: inline-block;
+  flex-shrink: 0;
+  box-shadow: 0 1px 4px rgba(31, 24, 14, 0.12);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+/* Der Profillink in der Nav – Avatar und Name nebeneinander */
+.hauptnavigation__link--user {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.hauptnavigation__link--user:hover .nav-avatar {
+  border-color: var(--akzent, #1c63d8);
+  box-shadow: 0 2px 8px rgba(28, 99, 216, 0.18);
+}
+
+/* Fallback-Avatar (kein Bild hochgeladen) */
+.nav-avatar--fallback {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid rgba(102, 91, 77, 0.20);
+  background: var(--kartenflaeche-zwei, #f0e6d8);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.85rem;
+  color: var(--textfarbe-sanft, #665b4c);
+  flex-shrink: 0;
+  text-transform: uppercase;
+  box-shadow: 0 1px 4px rgba(31, 24, 14, 0.10);
+}
+
+/* Kleinere Schaltflächen für Header-Buttons (Login/Logout) */
+.schaltflaeche--klein {
+  min-height: 38px;
+  padding: 0 14px;
+  font-size: 0.875rem;
+  border-radius: 10px;
+}
+
+/* --- Profilbild auf der Profilseite --- */
+
+.profil-avatar-bereich {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
+.profil-avatar {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(102, 91, 77, 0.18);
+  box-shadow: 0 6px 20px rgba(31, 24, 14, 0.12);
+  flex-shrink: 0;
+  background: var(--kartenflaeche-zwei, #f0e6d8);
+}
+
+/* Fallback-Avatar groß (Profilseite) */
+.profil-avatar--fallback {
+  width: 110px;
+  height: 110px;
+  border-radius: 50%;
+  border: 3px solid rgba(102, 91, 77, 0.18);
+  background: var(--kartenflaeche-zwei, #f0e6d8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 2.8rem;
+  font-weight: 800;
+  color: var(--textfarbe-sanft, #665b4c);
+  text-transform: uppercase;
+  flex-shrink: 0;
+  box-shadow: 0 6px 20px rgba(31, 24, 14, 0.10);
+  letter-spacing: 0.02em;
+}
+
+.profil-avatar-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.profil-avatar-info__name {
+  font-family: "Barlow Condensed", sans-serif;
+  font-size: 2rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.profil-avatar-info__email {
+  color: var(--textfarbe-sanft, #665b4c);
+  font-size: 0.95rem;
+}
+
+/* Upload-Schaltfläche unter dem Bild */
+.profil-avatar-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 10px;
+  min-height: 36px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.55);
+  border: 1px solid rgba(102, 91, 77, 0.16);
+  color: var(--textfarbe-sanft, #665b4c);
+  font-size: 0.85rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.profil-avatar-upload:hover {
+  background: rgba(255, 255, 255, 0.82);
+  color: var(--textfarbe, #161311);
+}
+
 
 /* Style ist mit grundbasis von KI entstand und verfeinert und optimiert wurden so weit, bis die Webseite 
 so stand, wie sie jetzt steht */

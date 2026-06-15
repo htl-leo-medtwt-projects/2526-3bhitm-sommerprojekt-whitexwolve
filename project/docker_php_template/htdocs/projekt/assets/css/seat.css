@@ -1,250 +1,253 @@
-
+/* ── Sitzplan-Seite Layout ───────────────────────────────────────────────── */
 .seat-page {
-  padding: 40px 0 64px;
+    padding: clamp(1.5rem, 4vw, 3rem) 0;
 }
 
-/* Kontext */
-.seat-kontext { margin-bottom: 20px; }
+.seat-kontext {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+}
 
 .seat-kontext__zurueck {
-  display: inline-block;
-  margin-bottom: 8px;
-  color: var(--muted);
-  font-weight: 700;
-  font-size: .9rem;
-  transition: color .18s;
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #7a7974);
+    text-decoration: none;
 }
-.seat-kontext__zurueck:hover { color: var(--text); }
+.seat-kontext__zurueck:hover { color: var(--color-text, #28251d); }
 
 .seat-kontext__info {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  font-weight: 700;
-}
-.seat-kontext__trenner { color: var(--muted); }
-
-/* Empfehlung-Banner */
-.empfehlung-banner {
-  background: #f0f5ff;
-  border: 1px solid rgba(28,99,216,.2);
-  border-radius: 14px;
-  padding: 14px 20px;
-  margin-bottom: 20px;
-  font-size: .92rem;
-  color: #1c4a9e;
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #7a7974);
+    display: flex;
+    gap: 0.4rem;
+    flex-wrap: wrap;
 }
 
-/* Layout */
+.trenner { opacity: 0.4; }
+
+/* ── Haupt-Layout: Saalplan + Sidebar ────────────────────────────────────── */
 .seat-layout {
-  display: grid;
-  grid-template-columns: 1fr 220px;
-  gap: 24px;
-  align-items: start;
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 1.5rem;
+    align-items: start;
 }
 
-/* Box */
-.seat-box, .legend-box {
-  background: #fcf8f1;
-  border: 1px solid rgba(102,91,77,.14);
-  border-radius: 22px;
-  padding: 28px;
+@media (max-width: 900px) {
+    .seat-layout {
+        grid-template-columns: 1fr;
+    }
 }
 
-/* Leinwand */
-.screen {
-  text-align: center;
-  background: rgba(102,91,77,.08);
-  padding: 10px;
-  border-radius: 10px;
-  margin: 20px 0;
-  font-weight: 800;
-  font-size: .75rem;
-  letter-spacing: .1em;
-  color: var(--muted);
+/* ── Saalplan-Box ─────────────────────────────────────────────────────────── */
+.seat-box {
+    background: var(--color-surface, #f9f8f5);
+    border: 1px solid var(--color-border, #d4d1ca);
+    border-radius: 1rem;
+    padding: 1.5rem;
+    overflow-x: auto;
 }
 
-/* Reihen */
+.seat-buehne {
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--color-text-muted, #7a7974);
+    border-bottom: 2px solid var(--color-border, #d4d1ca);
+    padding-bottom: 0.75rem;
+    margin-bottom: 1.25rem;
+}
+
+/* ── Legende ─────────────────────────────────────────────────────────────── */
+.seat-legende {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+}
+
+.seat-legende__item {
+    font-size: 0.72rem;
+    font-weight: 600;
+    padding: 0.2rem 0.6rem;
+    border-radius: 999px;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+}
+.seat-legende__item::before {
+    content: '';
+    width: 10px;
+    height: 10px;
+    border-radius: 3px;
+    display: inline-block;
+}
+.seat-legende__item--top::before    { background: #16a34a; }
+.seat-legende__item--ok::before     { background: #d97706; }
+.seat-legende__item--low::before    { background: #9ca3af; }
+.seat-legende__item--taken::before  { background: #374151; }
+
+/* ── Sitzplan Grid ───────────────────────────────────────────────────────── */
 .seat-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
 }
 
-.seat-row {
-  display: flex;
-  align-items: center;
-  gap: 10px;
+/* WICHTIG: jede Reihe ist eine horizontale Zeile */
+.seat-reihe {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 0.3rem;
 }
 
-.seat-row__label {
-  font-size: .72rem;
-  font-weight: 800;
-  letter-spacing: .08em;
-  color: var(--muted);
-  width: 16px;
-  text-align: center;
-  flex-shrink: 0;
+.seat-reihe__label {
+    width: 1.5rem;
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: var(--color-text-faint, #bab9b4);
+    text-align: center;
+    flex-shrink: 0;
 }
 
-.seat-row__seats {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-}
-
-/* Einzelner Sitz */
+/* ── Einzelner Sitz ──────────────────────────────────────────────────────── */
 .seat {
-  width: 44px;
-  height: 44px;
-  border: 1px solid rgba(102,91,77,.18);
-  border-radius: 10px;
-  font-weight: 800;
-  font-size: .65rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: transform .12s, box-shadow .15s, border-color .15s;
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    font-size: 0.65rem;
+    font-weight: 700;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: transform 120ms ease, box-shadow 120ms ease;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-.seat:not([disabled]):hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(31,24,14,.1);
+.seat--top {
+    background: #dcfce7;
+    border-color: #16a34a;
+    color: #15803d;
 }
-
-/* Tier-Farben (freie Sitze) */
-.seat--free.seat--tier-top  { background: #d4f5d4; border-color: #7bc87b; }
-.seat--free.seat--tier-ok   { background: #fff4cc; border-color: #e0c45a; }
-.seat--free.seat--tier-low  { background: #ebebeb; border-color: #ccc; color: #999; }
-
-/* Empfohlene Sitze extra hervorgehoben */
-.seat--empfohlen {
-  box-shadow: 0 0 0 2px #1c63d8;
-  border-color: #1c63d8 !important;
+.seat--ok {
+    background: #fef3c7;
+    border-color: #d97706;
+    color: #92400e;
 }
-
-/* Belegt */
+.seat--low {
+    background: var(--color-surface-offset, #f3f0ec);
+    border-color: var(--color-border, #d4d1ca);
+    color: var(--color-text-muted, #7a7974);
+}
 .seat--taken {
-  background: #e8e5e0;
-  border-color: rgba(102,91,77,.12);
-  color: #bbb;
-  cursor: not-allowed;
+    background: #e5e7eb;
+    border-color: #9ca3af;
+    color: #9ca3af;
+    cursor: not-allowed;
+    opacity: 0.6;
 }
-
-/* Ausgewählt */
+.seat--empfohlen {
+    box-shadow: 0 0 0 2px #16a34a, 0 0 8px rgba(22,163,74,0.3);
+}
 .seat--selected {
-  background: #1c63d8 !important;
-  border-color: #1c63d8 !important;
-  color: #fff !important;
-  box-shadow: 0 4px 14px rgba(28,99,216,.3);
+    background: var(--color-primary, #01696f) !important;
+    border-color: var(--color-primary, #01696f) !important;
+    color: #fff !important;
+    transform: scale(1.1);
 }
 
-/* Aktionszeile */
-.seat-aktionen {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 24px;
-  flex-wrap: wrap;
-  gap: 12px;
-  padding-top: 20px;
-  border-top: 1px solid rgba(102,91,77,.1);
+.seat--free:hover:not(:disabled) {
+    transform: scale(1.08);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+}
+
+/* ── Sidebar ─────────────────────────────────────────────────────────────── */
+.seat-sidebar {
+    background: var(--color-surface, #f9f8f5);
+    border: 1px solid var(--color-border, #d4d1ca);
+    border-radius: 1rem;
+    padding: 1.25rem;
+    position: sticky;
+    top: 1.5rem;
+}
+
+.seat-sidebar__titel {
+    font-size: 1rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: var(--color-text, #28251d);
+}
+
+.seat-empfehlung {
+    background: #dcfce7;
+    border: 1px solid #16a34a;
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.75rem;
+    margin-bottom: 1rem;
+}
+.seat-empfehlung__label {
+    font-size: 0.72rem;
+    font-weight: 700;
+    color: #15803d;
+    margin-bottom: 0.2rem;
+}
+.seat-empfehlung__sitze {
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: #15803d;
 }
 
 .seat-auswahl-info {
-  color: var(--muted);
-  font-weight: 700;
-  font-size: .9rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--color-divider, #dcd9d5);
 }
 
-/* Legende */
-.legend-box h2 {
-  font-family: "Barlow Condensed", sans-serif;
-  font-size: 1.1rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: .04em;
-  margin-bottom: 12px;
+.seat-auswahl-zeile {
+    display: flex;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #7a7974);
+}
+.seat-auswahl-zeile strong {
+    color: var(--color-text, #28251d);
 }
 
-.legend-box hr {
-  margin: 16px 0;
-  border: 0;
-  border-top: 1px solid rgba(102,91,77,.1);
-}
-
-.legend-box p {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: .88rem;
-  margin-bottom: 8px;
-}
-
-.legend-color {
-  display: inline-block;
-  width: 14px;
-  height: 14px;
-  border-radius: 4px;
-  flex-shrink: 0;
-}
-
-.legend-top    { background: #d4f5d4; border: 1px solid #7bc87b; }
-.legend-ok     { background: #fff4cc; border: 1px solid #e0c45a; }
-.legend-low    { background: #ebebeb; border: 1px solid #ccc; }
-.legend-taken  { background: #e8e5e0; border: 1px solid rgba(102,91,77,.2); }
-.legend-selected { background: #1c63d8; }
-
-/* Auswahl-Liste */
 .seat-liste {
-  list-style: none;
-  margin-top: 8px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.4rem;
+    margin-bottom: 1rem;
+    min-height: 2rem;
 }
 
 .seat-liste li {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: .82rem;
-  gap: 6px;
+    font-size: 0.8rem;
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+    color: var(--color-text, #28251d);
 }
 
-.seat-liste__id    { font-weight: 800; }
-.seat-liste__score { color: var(--muted); }
-.seat-liste__preis { font-weight: 700; }
-.seat-liste__leer  { color: var(--muted); font-size: .88rem; }
-
-/* Vibe Tags */
-.legend-vibes { margin-top: 4px; }
-
-.legend-vibes h2 {
-  margin-bottom: 10px;
+.seat-liste__leer {
+    color: var(--color-text-faint, #bab9b4) !important;
+    font-style: italic;
 }
 
-.vibe-tag {
-  display: inline-block;
-  background: #f0f5ff;
-  border: 1px solid rgba(28,99,216,.2);
-  color: #1c4a9e;
-  border-radius: 20px;
-  padding: 3px 10px;
-  font-size: .75rem;
-  font-weight: 700;
-  margin: 0 4px 4px 0;
-  text-transform: capitalize;
+.seat-reservieren {
+    width: 100%;
+    padding: 0.75rem;
+    font-size: 0.9rem;
 }
-
-.legend-leer { color: var(--muted); font-size: .85rem; }
-
-/* Responsive */
-@media (max-width: 760px) {
-  .seat-layout { grid-template-columns: 1fr; }
-  .seat { width: 36px; height: 36px; font-size: .6rem; }
-}
-
-/* Aufgrund vom Rückstand im Projekt, wurde primär mit KI entwickelt und eigenständig verfeinert. */

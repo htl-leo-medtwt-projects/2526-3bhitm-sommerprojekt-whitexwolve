@@ -1,158 +1,138 @@
 <?php
-require_once __DIR__ . '/data/events.php';
-require_once __DIR__ . '/data/halls.php';
+session_start();
+require_once __DIR__ . '/data/db.php';
+require_once __DIR__ . '/data/functions.php';
 
-function esc($value): string
-{
-    return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
+function esc($value): string {
+    return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
 
-// ─── URL-Parameter einlesen ───────────────────────────────────────────────────
-$showId   = $_GET['show']     ?? null;
+// ─── Parameter aus URL ────────────────────────────────────────────────────────
+$showId   = (int)($_GET['show']     ?? 0);
 $personen = max(1, (int)($_GET['personen'] ?? 1));
-$vibes    = $_GET['vibe']     ?? [];   // Array z.B. ['ruhig', 'beste_sicht']
-$modus    = $_GET['modus']    ?? 'empfehlung'; // 'empfehlung' oder 'selbst'
+$modus    = in_array($_GET['modus'] ?? '', ['empfehlung', 'selbst']) ? $_GET['modus'] : 'selbst';
+$vibes    = isset($_GET['vibe']) ? (array)$_GET['vibe'] : [];
 
-// Simulierte belegte Sitze (später aus DB)
-$taken = ['A3', 'A4', 'B5', 'C2', 'D7', 'E3', 'E4', 'E5'];
-
-// ─── Event + Show laden ───────────────────────────────────────────────────────
-$show  = null;
-$event = null;
-
+// ─── Belegte Sitze aus DB laden ───────────────────────────────────────────────
+$taken = [];
 if ($showId) {
-    $show = getShowById($showId);
-    if ($show) {
-        $event = getEventById($show['event_id']);
+    $stmt = $conn->prepare(
+        "SELECT seats FROM reservierungen WHERE show_id = ? AND status != 'storniert'"
+    );
+    $stmt->bind_param('i', $showId);
+    $stmt->execute();
+    $res = $stmt->get_result();
+    while ($row = $res->fetch_assoc()) {
+        foreach (explode(',', (string)$row['seats']) as $sitz) {
+            $sitz = trim($sitz);
+            if ($sitz !== '') $taken[] = $sitz;
+        }
+    }
+    $stmt->close();
+}
+
+// ─── Show + Event laden ───────────────────────────────────────────────────────
+$show  = $showId ? getShowById($conn, $showId) : null;
+$event = $show;  // getShowById liefert bereits alle Event-Felder per JOIN
+
+// ─── Saal-Layout dynamisch aus DB aufbauen ────────────────────────────────────
+$seats = [];
+if ($show) {
+    $rows    = (int)($show['anzahl_reihen']  ?? 8);
+    $cols    = (int)($show['anzahl_spalten'] ?? 10);
+    $letters = range('A', chr(ord('A') + $rows - 1));
+
+    foreach ($letters as $rowIndex => $rowLetter) {
+        for ($col = 1; $col <= $cols; $col++) {
+            $seatId   = $rowLetter . $col;
+            $isAisle  = ($col === 1 || $col === $cols);
+            $exitDist = min(10, max(1, (int)round(
+                (abs($col - 1) + abs($rowIndex)) / max(1, $rows + $cols) * 9 + 1
+            )));
+            $seats[] = [
+                'id'           => $seatId,
+                'row'          => $rowLetter,
+                'row_index'    => $rowIndex,
+                'row_count'    => $rows,
+                'col'          => $col,
+                'cols_in_row'  => $cols,
+                'is_aisle'     => $isAisle,
+                'exit_distance'=> $exitDist,
+            ];
+        }
     }
 }
 
-// ─── Saal-Layout für diese Show bestimmen ────────────────────────────────────
-$layout = $showId ? getLayoutForShow($showId) : $hall_layouts['kino'];
-$seats  = $layout['seats'];
-
-// ─── Score-Algorithmus ───────────────────────────────────────────────────────
-// Jeder Sitz bekommt einen Score 0–100 basierend auf den gewählten Vibes.
-// Mehrere Vibes werden gleichwertig kombiniert (Durchschnitt der Einzelscores).
-//
-// Vibe-Logik:
-//   ruhig       → kein Gangplatz (+), mittlere/hintere Reihe (+), weg vom Gang
-//   mittendrin  → Spalte nah an Reihenmitte (+), Reihe nah an Saalmitte (+)
-//   beste_sicht → "Sweet Spot" = ca. 40–60% der Reihentiefe vom Bühnenende
-//   schnell_raus → niedrige exit_distance (nah am Ausgang) = hoher Score
-
-function scoreForSeat(array $seat, array $vibes): int
-{
-    if (empty($vibes)) {
-        // Kein Vibe gewählt → alle Sitze gleich, Score 50
-        return 50;
-    }
-
+// ─── Score-Algorithmus ────────────────────────────────────────────────────────
+function scoreForSeat(array $seat, array $vibes): int {
+    if (empty($vibes)) return 50;
     $scores = [];
-
     foreach ($vibes as $vibe) {
-        $rowRatio = $seat['row_index'] / $seat['row_count'];       // 0 = vorne, 1 = hinten
-        $colMid   = ($seat['cols_in_row'] + 1) / 2;               // Spaltenmitte
-        $colDist  = abs($seat['col'] - $colMid) / $colMid;        // 0 = Mitte, 1 = Rand
-
+        $rowRatio = $seat['row_count'] > 1 ? $seat['row_index'] / ($seat['row_count'] - 1) : 0;
+        $colMid   = ($seat['cols_in_row'] + 1) / 2;
+        $colDist  = $colMid > 0 ? abs($seat['col'] - $colMid) / $colMid : 0;
         switch ($vibe) {
             case 'ruhig':
-                // Kein Gangplatz → hoher Score; je weiter innen, desto besser
-                $aisleBonus = $seat['is_aisle'] ? 0 : 30;
-                $innerScore = (int)((1 - $colDist) * 50);
-                $backBonus  = (int)($rowRatio * 20); // etwas weiter hinten = ruhiger
-                $scores[]   = min(100, $aisleBonus + $innerScore + $backBonus);
+                $scores[] = min(100, ($seat['is_aisle'] ? 0 : 30) + (int)((1 - $colDist) * 50) + (int)($rowRatio * 20));
                 break;
-
             case 'mittendrin':
-                // Nah an Spalten- UND Reihenmitte
-                $colScore = (int)((1 - $colDist) * 50);
-                $rowMidDist = abs($rowRatio - 0.5) * 2; // 0 = Mitte, 1 = Rand
-                $rowScore   = (int)((1 - $rowMidDist) * 50);
-                $scores[]   = $colScore + $rowScore;
+                $rowMidDist = abs($rowRatio - 0.5) * 2;
+                $scores[] = (int)((1 - $colDist) * 50) + (int)((1 - $rowMidDist) * 50);
                 break;
-
             case 'beste_sicht':
-                // Sweet Spot: 35–65% der Saaldistanz von vorne
-                // Senkrecht: möglichst nah an der Reihenmitte
-                $sweetSpot  = abs($rowRatio - 0.5);  // 0 = perfekte Mitte, 0.5 = Rand
-                $rowScore   = (int)((1 - $sweetSpot * 2) * 60);
-                $colScore   = (int)((1 - $colDist) * 40);
-                $scores[]   = max(0, $rowScore) + $colScore;
+                $sweetSpot = abs($rowRatio - 0.5);
+                $scores[] = max(0, (int)((1 - $sweetSpot * 2) * 60)) + (int)((1 - $colDist) * 40);
                 break;
-
             case 'schnell_raus':
-                // exit_distance 1 = nah → Score hoch; 10 = weit → Score niedrig
                 $scores[] = (int)((1 - ($seat['exit_distance'] - 1) / 9) * 100);
                 break;
         }
     }
-
-    // Durchschnitt aller Vibe-Scores
     return (int)(array_sum($scores) / count($scores));
 }
 
-// Score für alle Sitze berechnen und Tier zuweisen
-// Tier: 'top' (≥70), 'ok' (40–69), 'low' (<40)
+// Score + Tier für alle Sitze berechnen
 foreach ($seats as &$seat) {
-    $seat['score'] = scoreForSeat($seat, $vibes);
-    if ($seat['score'] >= 70)      $seat['tier'] = 'top';
-    elseif ($seat['score'] >= 40)  $seat['tier'] = 'ok';
-    else                           $seat['tier'] = 'low';
-
+    $seat['score']    = scoreForSeat($seat, $vibes);
+    $seat['tier']     = $seat['score'] >= 70 ? 'top' : ($seat['score'] >= 40 ? 'ok' : 'low');
     $seat['is_taken'] = in_array($seat['id'], $taken);
 }
-unset($seat); // Referenz aufheben nach foreach mit &
+unset($seat);
 
-// ─── Automatische Empfehlung berechnen ───────────────────────────────────────
-// Bei Modus 'empfehlung': die $personen besten zusammenhängenden freien Sitze finden.
-// "Zusammenhängend" = gleiche Reihe, aufeinanderfolgende Spalten.
+// ─── Empfehlung berechnen ─────────────────────────────────────────────────────
 $empfehlung = [];
-
 if ($modus === 'empfehlung') {
-    // Sitze nach Score sortieren (höchster zuerst), belegte ausschließen
     $freeSeats = array_filter($seats, fn($s) => !$s['is_taken']);
-
-    // Reihen gruppieren
     $byRow = [];
-    foreach ($freeSeats as $s) {
-        $byRow[$s['row']][] = $s;
-    }
+    foreach ($freeSeats as $s) $byRow[$s['row']][] = $s;
 
-    $bestGroup      = [];
-    $bestGroupScore = -1;
-
-    foreach ($byRow as $rowLetter => $rowSeats) {
-        // Sitze in der Reihe nach Spalte sortieren
+    $bestGroup = [];
+    $bestScore = -1;
+    foreach ($byRow as $rowSeats) {
         usort($rowSeats, fn($a, $b) => $a['col'] - $b['col']);
-
-        // Sliding Window der Größe $personen über die Reihe
         $count = count($rowSeats);
         for ($i = 0; $i <= $count - $personen; $i++) {
-            // Prüfen ob die Sitze wirklich aufeinanderfolgend sind (keine Lücke)
-            $group     = array_slice($rowSeats, $i, $personen);
-            $cols      = array_column($group, 'col');
-            $isConsec  = (max($cols) - min($cols) === $personen - 1);
-
-            if (!$isConsec) continue;
-
+            $group = array_slice($rowSeats, $i, $personen);
+            $cols  = array_column($group, 'col');
+            if (max($cols) - min($cols) !== $personen - 1) continue;
             $groupScore = (int)(array_sum(array_column($group, 'score')) / $personen);
-
-            if ($groupScore > $bestGroupScore) {
-                $bestGroupScore = $groupScore;
-                $bestGroup      = array_column($group, 'id');
+            if ($groupScore > $bestScore) {
+                $bestScore = $groupScore;
+                $bestGroup = array_column($group, 'id');
             }
         }
     }
-
     $empfehlung = $bestGroup;
 }
 
-// ─── Sitze nach Reihe gruppieren (für Ausgabe im HTML) ───────────────────────
+// ─── Sitze nach Reihe gruppieren ─────────────────────────────────────────────
 $seatsByRow = [];
-foreach ($seats as $s) {
-    $seatsByRow[$s['row']][] = $s;
-}
+foreach ($seats as $s) $seatsByRow[$s['row']][] = $s;
+
+$pricePerSeat = (float)($show['ticket_price'] ?? 0);
+$showDisplay  = $show
+    ? date('d.m.Y', strtotime($show['show_date'])) . ' um ' . substr($show['show_time'], 0, 5) . ' Uhr'
+    : '';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -167,6 +147,7 @@ foreach ($seats as $s) {
     <link rel="stylesheet" href="assets/css/seat.css">
 </head>
 <body>
+<?php require_once __DIR__ . '/partials/site-header.php'; ?>
 
 <main class="seat-page">
     <div class="seitenbreite">
@@ -174,116 +155,120 @@ foreach ($seats as $s) {
         <?php if ($show && $event): ?>
 
             <div class="seat-kontext">
-                <a class="seat-kontext__zurueck" href="vibe.php?show=<?= urlencode((string)$showId) ?>">
-                    ← Zurück zu Vibes
-                </a>
+                <a class="seat-kontext__zurueck" href="vibe.php?show=<?= urlencode((string)$showId) ?>">← Zurück</a>
                 <div class="seat-kontext__info">
-                    <span class="seat-kontext__event"><?= esc($event['title']) ?></span>
-                    <span class="seat-kontext__trenner">·</span>
-                    <span class="seat-kontext__zeit"><?= esc($show['display']) ?></span>
-                    <span class="seat-kontext__trenner">·</span>
-                    <span class="seat-kontext__ort"><?= esc(HALL_NAME) ?> – <?= esc($layout['name']) ?></span>
+                    <span><?= esc($event['title']) ?></span>
+                    <span class="trenner">·</span>
+                    <span><?= esc($showDisplay) ?></span>
                 </div>
             </div>
-
-            <?php if ($modus === 'empfehlung' && !empty($empfehlung)): ?>
-                <div class="empfehlung-banner">
-                    ✦ Empfehlung für <?= $personen ?> Person<?= $personen > 1 ? 'en' : '' ?>:
-                    <strong><?= esc(implode(', ', $empfehlung)) ?></strong>
-                    – basierend auf deinen Vibes
-                </div>
-            <?php endif; ?>
 
             <div class="seat-layout">
 
-                <section class="seat-box" data-price="<?= esc((string)($event['price'] ?? 0)) ?>">
-                    <h1>Sitzplatz wählen</h1>
-                    <div class="screen">LEINWAND / BÜHNE</div>
+                <!-- Saalplan -->
+                <section
+                    class="seat-box"
+                    data-price="<?= esc((string)$pricePerSeat) ?>"
+                    data-show="<?= esc((string)$showId) ?>"
+                    data-personen="<?= esc((string)$personen) ?>"
+                    data-modus="<?= esc($modus) ?>"
+                >
+                    <div class="seat-buehne">
+                        <span>🎭 Bühne</span>
+                    </div>
 
-                    <div class="seat-grid" style="--cols: <?= max(array_map(fn($r) => count($r), $seatsByRow)) ?>">
+                    <div class="seat-legende">
+                        <span class="seat-legende__item seat-legende__item--top">Top</span>
+                        <span class="seat-legende__item seat-legende__item--ok">Ok</span>
+                        <span class="seat-legende__item seat-legende__item--low">Niedrig</span>
+                        <span class="seat-legende__item seat-legende__item--taken">Belegt</span>
+                    </div>
+
+                    <div class="seat-grid">
                         <?php foreach ($seatsByRow as $rowLetter => $rowSeats): ?>
-                            <div class="seat-row">
-                                <span class="seat-row__label"><?= esc($rowLetter) ?></span>
-                                <div class="seat-row__seats">
-                                    <?php foreach ($rowSeats as $s): ?>
-                                        <?php
-                                            $isEmpfohlen = in_array($s['id'], $empfehlung);
-                                            $classes = 'seat';
-                                            if ($s['is_taken'])          $classes .= ' seat--taken';
-                                            elseif ($isEmpfohlen)        $classes .= ' seat--free seat--empfohlen seat--tier-' . $s['tier'];
-                                            else                         $classes .= ' seat--free seat--tier-' . $s['tier'];
-                                        ?>
-                                        <button
-                                            class="<?= $classes ?>"
-                                            data-seat="<?= esc($s['id']) ?>"
-                                            data-score="<?= $s['score'] ?>"
-                                            title="<?= esc($s['id']) ?> · Score: <?= $s['score'] ?>"
-                                            <?= $s['is_taken'] ? 'disabled aria-disabled="true"' : '' ?>
-                                        >
-                                            <?= esc($s['id']) ?>
-                                        </button>
-                                    <?php endforeach; ?>
-                                </div>
+                            <div class="seat-reihe">
+                                <span class="seat-reihe__label"><?= esc($rowLetter) ?></span>
+                                <?php foreach ($rowSeats as $seat): ?>
+                                    <?php
+                                        $classes = ['seat'];
+                                        if ($seat['is_taken']) {
+                                            $classes[] = 'seat--taken';
+                                        } else {
+                                            $classes[] = 'seat--free';
+                                            $classes[] = 'seat--' . $seat['tier'];
+                                        }
+                                        if (in_array($seat['id'], $empfehlung)) {
+                                            $classes[] = 'seat--empfohlen';
+                                        }
+                                    ?>
+                                    <button
+                                        class="<?= esc(implode(' ', $classes)) ?>"
+                                        data-seat="<?= esc($seat['id']) ?>"
+                                        data-score="<?= esc((string)$seat['score']) ?>"
+                                        <?= $seat['is_taken'] ? 'disabled' : '' ?>
+                                        aria-label="Sitz <?= esc($seat['id']) ?><?= $seat['is_taken'] ? ' (belegt)' : ' (Score ' . $seat['score'] . ')' ?>"
+                                    ><?= esc($seat['id']) ?></button>
+                                <?php endforeach; ?>
                             </div>
                         <?php endforeach; ?>
                     </div>
-
-                    <div class="seat-aktionen">
-                        <div class="seat-auswahl-info">
-                            <span id="seatAnzahl">0</span> / <?= $personen ?> Plätze gewählt –
-                            Gesamt: € <span id="seatPreis">0,00</span>
-                        </div>
-                        <button class="schaltflaeche schaltflaeche--primaer" id="reservierenButton" disabled>
-                            Zur Reservierung
-                        </button>
-                    </div>
                 </section>
 
-                <aside class="legend-box">
-                    <h2>Legende</h2>
-                    <p><span class="legend-color legend-top"></span> Top Match</p>
-                    <p><span class="legend-color legend-ok"></span> Okay</p>
-                    <p><span class="legend-color legend-low"></span> Nicht ideal</p>
-                    <p><span class="legend-color legend-taken"></span> Belegt</p>
-                    <p><span class="legend-color legend-selected"></span> Ausgewählt</p>
+                <!-- Sidebar -->
+                <aside class="seat-sidebar">
+                    <h2 class="seat-sidebar__titel">Auswahl</h2>
 
-                    <hr>
+                    <?php if (!empty($empfehlung)): ?>
+                        <div class="seat-empfehlung">
+                            <p class="seat-empfehlung__label">✨ Empfehlung</p>
+                            <p class="seat-empfehlung__sitze"><?= esc(implode(', ', $empfehlung)) ?></p>
+                        </div>
+                    <?php endif; ?>
 
-                    <h2>Deine Auswahl</h2>
-                    <ul id="seatListe" class="seat-liste">
+                    <div class="seat-auswahl-info">
+                        <div class="seat-auswahl-zeile">
+                            <span>Ausgewählt</span>
+                            <strong id="seatAnzahl">0</strong>
+                        </div>
+                        <div class="seat-auswahl-zeile">
+                            <span>Gesamt</span>
+                            <strong>€ <span id="seatPreis">0,00</span></strong>
+                        </div>
+                    </div>
+
+                    <ul class="seat-liste" id="seatListe">
                         <li class="seat-liste__leer">Noch kein Platz gewählt.</li>
                     </ul>
 
-                    <hr>
-
-                    <div class="legend-vibes">
-                        <h2>Deine Vibes</h2>
-                        <?php if (!empty($vibes)): ?>
-                            <?php foreach ($vibes as $v): ?>
-                                <span class="vibe-tag"><?= esc($v) ?></span>
-                            <?php endforeach; ?>
-                        <?php else: ?>
-                            <span class="legend-leer">Keine Vibes gewählt</span>
-                        <?php endif; ?>
-                    </div>
+                    <button
+                        class="schaltflaeche schaltflaeche--primaer seat-reservieren"
+                        id="reservierenButton"
+                        disabled
+                    >
+                        Zur Reservierung
+                    </button>
                 </aside>
-
             </div>
 
         <?php else: ?>
+
             <section class="seat-box">
                 <h1>Vorstellung nicht gefunden</h1>
                 <p>Diese Vorstellung konnte nicht geladen werden.</p>
                 <a class="schaltflaeche schaltflaeche--primaer" href="index.php">Zurück zur Übersicht</a>
             </section>
+
         <?php endif; ?>
 
     </div>
 </main>
 
+<?php require_once __DIR__ . '/partials/site-footer.php'; ?>
+
 <script>
-    // Personen-Anzahl und Empfehlung aus PHP an JS übergeben
-    const PERSONEN    = <?= $personen ?>;
+    const EVENT_TITEL = <?= json_encode($event['title'] ?? '') ?>;
+    const SHOW_ZEIT   = <?= json_encode($showDisplay) ?>;
+    const PERSONEN    = <?= (int)$personen ?>;
     const EMPFEHLUNG  = <?= json_encode($empfehlung) ?>;
 </script>
 <script src="assets/js/seat.js"></script>

@@ -1,0 +1,275 @@
+/* ── Auth-Seiten (login, register) ─────────────────────────────── */
+
+.auth-seite {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 4rem 1rem;
+    min-height: calc(100vh - 160px);
+}
+
+.auth-box {
+    width: 100%;
+    max-width: 460px;
+    background: var(--card);
+    border: 1px solid rgba(102,91,77,.16);
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: var(--shadow);
+}
+
+.auth-titel {
+    font-family: "Barlow Condensed", sans-serif;
+    text-transform: uppercase;
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    line-height: .9;
+    letter-spacing: -.03em;
+    margin-bottom: .5rem;
+}
+
+.auth-untertitel {
+    color: var(--muted);
+    margin-bottom: 1.75rem;
+    font-size: .95rem;
+}
+
+.auth-untertitel a {
+    color: var(--blue);
+    font-weight: 700;
+}
+
+.auth-feld {
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+    margin-bottom: 1.1rem;
+}
+
+.auth-label {
+    font-size: .78rem;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+}
+
+.auth-hinweis {
+    font-weight: 400;
+    text-transform: none;
+    letter-spacing: 0;
+}
+
+.auth-input {
+    width: 100%;
+    min-height: 52px;
+    padding: 0 16px;
+    border: 1px solid rgba(102,91,77,.16);
+    border-radius: 14px;
+    background: #fffdf9;
+    color: var(--text);
+    font-size: 1rem;
+}
+
+.auth-input:focus {
+    outline: none;
+    border-color: var(--blue);
+    background: #fff;
+}
+
+.auth-submit {
+    width: 100%;
+    margin-top: .5rem;
+}
+
+.auth-fehler {
+    background: rgba(200,50,50,.08);
+    border: 1px solid rgba(200,50,50,.2);
+    border-radius: 12px;
+    padding: .75rem 1rem;
+    margin-bottom: 1.25rem;
+    color: #b33;
+    font-size: .9rem;
+}
+
+.auth-fehler p { margin: 0; }
+
+.auth-erfolg {
+    background: rgba(50,150,80,.1);
+    border: 1px solid rgba(50,150,80,.25);
+    border-radius: 12px;
+    padding: .75rem 1rem;
+    margin-bottom: 1rem;
+    color: #2a7a3a;
+    font-size: .9rem;
+    font-weight: 600;
+}
+
+.auth-erfolg a { color: inherit; text-decoration: underline; }
+
+/* ── Kleine Schaltfläche für Nav ────────────────────────────────── */
+
+.schaltflaeche--klein {
+    min-height: 40px;
+    padding: 0 16px;
+    font-size: .88rem;
+    border-radius: 10px;
+}
+
+/* ── Nav Avatar ─────────────────────────────────────────────────── */
+
+.nav-avatar {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin-right: 6px;
+    vertical-align: middle;
+    border: 2px solid rgba(102,91,77,.2);
+}
+
+/* ── Profilseite ─────────────────────────────────────────────────── */
+
+.profil-seite {
+    padding: 2.5rem 0 4rem;
+}
+
+.profil-layout {
+    display: grid;
+    grid-template-columns: 300px 1fr;
+    gap: 2rem;
+    align-items: start;
+}
+
+.profil-karte {
+    background: var(--card);
+    border: 1px solid rgba(102,91,77,.16);
+    border-radius: 24px;
+    padding: 2rem;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    position: sticky;
+    top: 100px;
+}
+
+.profil-avatar-bereich {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 1rem;
+}
+
+.profil-avatar {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 3px solid rgba(102,91,77,.2);
+}
+
+.profil-avatar--platzhalter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, var(--dark), var(--dark2));
+    color: #fff;
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+}
+
+.profil-name {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 1.6rem;
+    text-transform: uppercase;
+    letter-spacing: -.02em;
+    text-align: center;
+}
+
+.profil-email,
+.profil-seit {
+    color: var(--muted);
+    font-size: .88rem;
+    text-align: center;
+}
+
+.profil-upload-form {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(102,91,77,.14);
+}
+
+.profil-file-input {
+    font-size: .88rem;
+    color: var(--muted);
+}
+
+.profil-section-titel {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: clamp(1.8rem, 3vw, 2.4rem);
+    text-transform: uppercase;
+    letter-spacing: -.03em;
+    line-height: .9;
+    margin-bottom: 1.25rem;
+}
+
+.reservierungen-liste {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.reservierungs-karte {
+    background: var(--card);
+    border: 1px solid rgba(102,91,77,.16);
+    border-radius: 18px;
+    padding: 1.25rem 1.5rem;
+    box-shadow: var(--shadow);
+}
+
+.reservierungs-karte__kopf {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 1rem;
+    margin-bottom: .5rem;
+}
+
+.reservierungs-karte__titel {
+    font-family: "Barlow Condensed", sans-serif;
+    font-size: 1.4rem;
+    text-transform: uppercase;
+    letter-spacing: -.02em;
+    line-height: 1;
+}
+
+.reservierungs-karte__preis {
+    font-weight: 800;
+    font-size: 1.1rem;
+    white-space: nowrap;
+}
+
+.reservierungs-karte__info {
+    color: var(--muted);
+    font-size: .9rem;
+    margin-bottom: .2rem;
+}
+
+.reservierungs-karte__datum {
+    font-size: .78rem;
+    color: var(--muted);
+    margin-top: .5rem;
+    opacity: .7;
+}
+
+@media (max-width: 920px) {
+    .profil-layout {
+        grid-template-columns: 1fr;
+    }
+    .profil-karte {
+        position: static;
+    }
+}

@@ -1,24 +1,111 @@
 .show {
-    padding: 40px 0;
+    padding: clamp(2rem, 5vw, 4rem) 0;
+    min-height: calc(100dvh - 140px);
+}
+
+.show-zurueck {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    font-size: 0.875rem;
+    color: var(--color-text-muted, #7a7974);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    transition: color 180ms ease;
+}
+
+.show-zurueck:hover {
+    color: var(--color-text, #28251d);
 }
 
 .show-box {
     max-width: 700px;
     margin: 0 auto;
-    background: white;
-    padding: 24px;
-    border-radius: 12px;
-    border: 1px solid #ddd;
+    background: var(--color-surface, #f9f8f5);
+    padding: clamp(1.5rem, 4vw, 2.5rem);
+    border-radius: 1rem;
+    border: 1px solid var(--color-border, #d4d1ca);
+    box-shadow: 0 4px 24px oklch(0.2 0.01 80 / 0.07);
+}
+
+.show-box__kategorie {
+    display: inline-block;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--color-primary, #01696f);
+    background: var(--color-primary-highlight, #cedcd8);
+    padding: 0.2rem 0.65rem;
+    border-radius: 999px;
+    margin-bottom: 1rem;
 }
 
 .show-box h1 {
-    margin-bottom: 16px;
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    margin-bottom: 0.5rem;
+    color: var(--color-text, #28251d);
 }
 
-.show-box p {
-    margin-bottom: 10px;
+.show-box__beschreibung {
+    font-size: 1rem;
+    color: var(--color-text-muted, #7a7974);
+    margin-bottom: 1.75rem;
+    line-height: 1.6;
 }
 
-.beschreibung {
-    margin: 20px 0;
+.show-box__trennlinie {
+    border: none;
+    border-top: 1px solid var(--color-divider, #dcd9d5);
+    margin: 1.25rem 0;
+}
+
+.show-box__meta {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem 1.5rem;
+    margin-bottom: 1.75rem;
+}
+
+.show-meta-eintrag {
+    display: flex;
+    flex-direction: column;
+    gap: 0.2rem;
+}
+
+.show-meta-eintrag__label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-faint, #bab9b4);
+}
+
+.show-meta-eintrag__wert {
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--color-text, #28251d);
+}
+
+.show-box__aktionen {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 480px) {
+    .show-box__meta {
+        grid-template-columns: 1fr;
+    }
+
+    .show-box__aktionen {
+        flex-direction: column;
+    }
+
+    .show-box__aktionen .schaltflaeche {
+        width: 100%;
+        text-align: center;
+    }
 }

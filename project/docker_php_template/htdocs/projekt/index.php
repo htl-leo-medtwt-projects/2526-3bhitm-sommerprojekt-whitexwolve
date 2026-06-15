@@ -1,19 +1,44 @@
 <?php
-require_once __DIR__ . '/data/events.php';
+session_start();
+require_once __DIR__ . '/data/db.php';
+require_once __DIR__ . '/data/functions.php';
 
-// hilfe von ki: sichere HTML-Ausgabe, damit Sonderzeichen sauber angezeigt werden
-function esc($value): string
-{
+function esc($value): string {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-// hilfe von ki: für Suche/Filter alles in Kleinbuchstaben umwandeln,
-// mb_strtolower ist für Umlaute robuster als strtolower
-function lower_text($value): string
-{
+function lower_text($value): string {
     $text = (string) $value;
     return function_exists('mb_strtolower') ? mb_strtolower($text) : strtolower($text);
 }
+
+// Events aus DB laden – gruppiert nach event_id
+$allShows = getAllShows($conn);
+
+// Events gruppieren: pro Event alle zugehörigen Shows sammeln
+$eventsGrouped = [];
+foreach ($allShows as $show) {
+    $eid = $show['event_id'] ?? $show['show_id'];
+    if (!isset($eventsGrouped[$eid])) {
+        $eventsGrouped[$eid] = [
+            'title'       => $show['title'],
+            'description' => $show['description'],
+            'category'    => $show['category'],
+            'price'       => $show['ticket_price'],
+            'theme'       => 'nachtblau', // Fallback-Theme
+            'shows'       => [],
+        ];
+    }
+    $eventsGrouped[$eid]['shows'][] = [
+        'id'      => $show['show_id'],
+        'display' => date('d.m.Y H:i', strtotime($show['show_date'] . ' ' . $show['show_time'])) . ' Uhr',
+    ];
+}
+$events = array_values($eventsGrouped);
+
+// Saalname aus DB holen
+$saal = getSaalByName($conn, 'Hauptsaal');
+$hallName = $saal['name'] ?? 'VibeSeat Arena';
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -43,14 +68,13 @@ function lower_text($value): string
                         <h1 class="startbereich__titel">
                             Tickets finden, Vorstellung aussuchen, Sitzplatz durch Vibes entdecken
                         </h1>
-
                     </div>
 
                     <aside class="veranstaltungsort_karte">
                         <span class="veranstaltungsort_karte__label">Veranstaltungsort</span>
-                        <h2 class="veranstaltungsort_karte__titel"><?= esc(HALL_NAME) ?></h2>
+                        <h2 class="veranstaltungsort_karte__titel"><?= esc($hallName) ?></h2>
                         <p>
-                            Erlebe deine Lieblingsveranstaltungen in der <?= esc(HALL_NAME) ?>, dem
+                            Erlebe deine Lieblingsveranstaltungen in der <?= esc($hallName) ?>, dem
                             angesagten Veranstaltungsort in der Stadt. Von mitreißenden Konzerten über
                             fesselnde Theaterstücke bis hin zu spannenden Kinofilmen – hier findest du
                             alles an einem Ort. Genieße erstklassige Unterhaltung und reserviere jetzt
@@ -80,7 +104,7 @@ function lower_text($value): string
                                 type="text"
                                 id="search"
                                 name="search"
-                                placeholder="z. B. Starlight, Theater oder Cinema"
+                                placeholder="z. B. Jazz, Theater oder Comedy"
                                 autocomplete="off"
                             >
                         </div>
@@ -89,15 +113,21 @@ function lower_text($value): string
                             <label class="suchformular__label" for="category">Kategorie</label>
                             <select class="suchformular__auswahl" id="category" name="category">
                                 <option value="">Alle Kategorien</option>
-                                <option value="Konzert">Konzert</option>
-                                <option value="Theater">Theater</option>
-                                <option value="Kino">Kino</option>
+                                <?php
+                                $kategorien = array_unique(array_column(
+                                    array_map(fn($e) => ['category' => $e['category']], $events),
+                                    'category'
+                                ));
+                                sort($kategorien);
+                                foreach ($kategorien as $kat): ?>
+                                    <option value="<?= esc($kat) ?>"><?= esc($kat) ?></option>
+                                <?php endforeach; ?>
                             </select>
                         </div>
 
                         <div class="suchformular__feldgruppe">
                             <span class="suchformular__label">Ort</span>
-                            <div class="suchformular__festwert"><?= esc(HALL_NAME) ?></div>
+                            <div class="suchformular__festwert"><?= esc($hallName) ?></div>
                         </div>
 
                         <div class="suchformular__aktionen">
@@ -129,13 +159,12 @@ function lower_text($value): string
                 <div class="eventuebersicht__raster" id="eventRaster">
                     <?php foreach ($events as $event): ?>
                         <?php
-                            // hilfe von ki: sichere Fallbacks, damit keine Undefined-array-key-Warnings kommen
-                            $title = $event['title'] ?? 'Unbenanntes Event';
+                            $title       = $event['title']       ?? 'Unbenanntes Event';
                             $description = $event['description'] ?? 'Keine Beschreibung vorhanden.';
-                            $category = $event['category'] ?? 'Sonstiges';
-                            $theme = $event['theme'] ?? 'nachtblau';
-                            $price = isset($event['price']) ? (float)$event['price'] : 0;
-                            $shows = $event['shows'] ?? [];
+                            $category    = $event['category']    ?? 'Sonstiges';
+                            $theme       = $event['theme']       ?? 'nachtblau';
+                            $price       = isset($event['price']) ? (float)$event['price'] : 0;
+                            $shows       = $event['shows']       ?? [];
                         ?>
 
                         <article
@@ -153,23 +182,18 @@ function lower_text($value): string
                                 <p class="veranstaltungskarte__beschreibung"><?= esc($description) ?></p>
 
                                 <div class="veranstaltungskarte__meta">
-                                    <span>📍 <?= esc(HALL_NAME) ?></span>
+                                    <span>📍 <?= esc($hallName) ?></span>
                                     <span>🎟️ ab € <?= number_format($price, 2, ',', '.') ?></span>
                                 </div>
 
                                 <div class="vorstellungszeiten">
-                                    <?php if (!empty($shows) && is_array($shows)): ?>
+                                    <?php if (!empty($shows)): ?>
                                         <?php foreach ($shows as $show): ?>
-                                            <?php
-                                                // hilfe von ki: auch bei einzelnen Shows wieder sichere Fallbacks
-                                                $showId = $show['id'] ?? '';
-                                                $showDisplay = $show['display'] ?? 'Unbekannte Zeit';
-                                            ?>
                                             <a
                                                 class="vorstellungszeiten__eintrag"
-                                                href="show.php?show=<?= urlencode((string)$showId) ?>"
+                                                href="show.php?show=<?= urlencode((string)($show['id'] ?? '')) ?>"
                                             >
-                                                <?= esc($showDisplay) ?>
+                                                <?= esc($show['display'] ?? '') ?>
                                             </a>
                                         <?php endforeach; ?>
                                     <?php else: ?>
@@ -182,14 +206,10 @@ function lower_text($value): string
                                         Details
                                     </a>
 
-                                    <?php if (!empty($shows) && is_array($shows)): ?>
-                                        <?php
-                                            // hilfe von ki: erste Vorstellung als Standard-Link verwenden
-                                            $firstShowId = $shows[0]['id'] ?? '';
-                                        ?>
+                                    <?php if (!empty($shows)): ?>
                                         <a
                                             class="schaltflaeche schaltflaeche--primaer"
-                                            href="show.php?show=<?= urlencode((string)$firstShowId) ?>"
+                                            href="show.php?show=<?= urlencode((string)($shows[0]['id'] ?? '')) ?>"
                                         >
                                             Vorstellung wählen
                                         </a>

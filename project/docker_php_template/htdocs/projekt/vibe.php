@@ -1,22 +1,15 @@
-
 <?php
-require_once __DIR__ . '/data/events.php';
+session_start();
+require_once __DIR__ . '/data/db.php';
+require_once __DIR__ . '/data/functions.php';
 
 function esc($value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-$showId = $_GET['show'] ?? null;
-$show   = null;
-$event  = null;
-
-if ($showId) {
-    $show = getShowById($showId);
-    if ($show) {
-        $event = getEventById($show['event_id']);
-    }
-}
+$showId = intval($_GET['show'] ?? 0);
+$show   = $showId ? getShowById($conn, $showId) : null;
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -35,16 +28,19 @@ if ($showId) {
 <main class="vibe-page">
     <div class="seitenbreite">
 
-        <?php if ($show && $event): ?>
+        <?php if ($show): ?>
 
             <div class="vibe-kontext">
                 <a class="vibe-kontext__zurueck" href="show.php?show=<?= urlencode((string)$showId) ?>">
                     ← Zurück
                 </a>
                 <div class="vibe-kontext__info">
-                    <span><?= esc($event['title']) ?></span>
+                    <span><?= esc($show['title']) ?></span>
                     <span class="trenner">·</span>
-                    <span><?= esc($show['display']) ?></span>
+                    <span>
+                        <?= esc(date('d.m.Y', strtotime($show['show_date']))) ?>
+                        um <?= esc(substr($show['show_time'], 0, 5)) ?> Uhr
+                    </span>
                 </div>
             </div>
 
@@ -58,26 +54,15 @@ if ($showId) {
                         Sag uns, was dir wichtig ist – wir zeigen dir die besten Plätze.
                     </p>
 
-                    <!-- Anzahl Personen -->
                     <div class="vibe-gruppe">
                         <label class="vibe-label" for="personen">Wie viele Personen?</label>
                         <div class="vibe-anzahl">
                             <button type="button" class="anzahl-btn" id="anzahlMinus">−</button>
-                            <input
-                                type="number"
-                                id="personen"
-                                name="personen"
-                                value="1"
-                                min="1"
-                                max="20"
-                                class="anzahl-input"
-                                readonly
-                            >
+                            <input type="number" id="personen" name="personen" value="1" min="1" max="20" class="anzahl-input" readonly>
                             <button type="button" class="anzahl-btn" id="anzahlPlus">+</button>
                         </div>
                     </div>
 
-                    <!-- Vibes -->
                     <div class="vibe-gruppe">
                         <span class="vibe-label">Was ist dir wichtig?</span>
                         <div class="vibe-optionen">
@@ -121,7 +106,6 @@ if ($showId) {
                         </div>
                     </div>
 
-                    <!-- Modus -->
                     <div class="vibe-gruppe">
                         <span class="vibe-label">Wie möchtest du wählen?</span>
                         <div class="vibe-modus">
@@ -151,7 +135,6 @@ if ($showId) {
 
                 </form>
 
-                <!-- Info-Sidebar -->
                 <aside class="vibe-info">
                     <h2>So funktioniert's</h2>
                     <ol class="vibe-schritte">

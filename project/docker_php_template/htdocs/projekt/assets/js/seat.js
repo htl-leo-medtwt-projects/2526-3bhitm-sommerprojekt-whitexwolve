@@ -1,23 +1,22 @@
-// Preis pro Sitz aus data-price Attribut
-const seatBox      = document.querySelector('.seat-box');
+const seatBox     = document.querySelector('.seat-box');
 const pricePerSeat = parseFloat(seatBox?.dataset.price ?? 0);
 
-// Alle freien Sitze
-const seats         = document.querySelectorAll('.seat--free');
-const seatAnzahl    = document.getElementById('seatAnzahl');
-const seatPreis     = document.getElementById('seatPreis');
-const seatListe     = document.getElementById('seatListe');
-const reservieren   = document.getElementById('reservierenButton');
+const seats       = document.querySelectorAll('.seat--free');
+const seatAnzahl  = document.getElementById('seatAnzahl');
+const seatPreis   = document.getElementById('seatPreis');
+const seatListe   = document.getElementById('seatListe');
+const reservieren = document.getElementById('reservierenButton');
 
-// Set mit aktuell ausgewählten Sitz-IDs
 const ausgewaehlt = new Set();
 
-// Wenn Modus = Empfehlung, empfohlene Sitze automatisch vorauswählen
+// Empfehlung automatisch vorauswählen
 if (typeof EMPFEHLUNG !== 'undefined' && EMPFEHLUNG.length > 0) {
     EMPFEHLUNG.forEach((id) => {
         ausgewaehlt.add(id);
         const btn = document.querySelector(`.seat[data-seat="${id}"]`);
-        if (btn) btn.classList.add('seat--selected');
+        if (btn) {
+            btn.classList.add('seat--selected');
+        }
     });
 }
 
@@ -38,23 +37,17 @@ function updateAnzeige() {
         seatListe.appendChild(leer);
     } else {
         ausgewaehlt.forEach((id) => {
-            // Score aus data-score Attribut holen
             const btn   = document.querySelector(`.seat[data-seat="${id}"]`);
             const score = btn?.dataset.score ?? '–';
             const item  = document.createElement('li');
-            item.innerHTML = `<span class="seat-liste__id">${id}</span>
-                              <span class="seat-liste__score">Score ${score}</span>
-                              <span class="seat-liste__preis">€ ${formatPreis(pricePerSeat)}</span>`;
+            item.innerHTML = `<strong>${id}</strong> <span>Score ${score}</span> <span>€ ${formatPreis(pricePerSeat)}</span>`;
             seatListe.appendChild(item);
         });
     }
 
-    // Button freischalten wenn genau die gewünschte Personenzahl ausgewählt ist
-    // (oder bei modus=selbst: mindestens 1)
     const ziel = typeof PERSONEN !== 'undefined' ? PERSONEN : 1;
     reservieren.disabled = ausgewaehlt.size === 0;
 
-    // Visuelles Feedback: Button-Text anpassen
     if (ausgewaehlt.size === 0) {
         reservieren.textContent = 'Zur Reservierung';
     } else if (ausgewaehlt.size < ziel) {
@@ -68,7 +61,6 @@ function updateAnzeige() {
 seats.forEach((btn) => {
     btn.addEventListener('click', () => {
         const id = btn.dataset.seat;
-
         if (ausgewaehlt.has(id)) {
             ausgewaehlt.delete(id);
             btn.classList.remove('seat--selected');
@@ -76,12 +68,11 @@ seats.forEach((btn) => {
             ausgewaehlt.add(id);
             btn.classList.add('seat--selected');
         }
-
         updateAnzeige();
     });
 });
 
-// Zur Reservierung weiterleiten
+// Zur Reservierung weiterleiten — "sitze" → "seats" damit reservation.php es liest
 reservieren.addEventListener('click', () => {
     if (ausgewaehlt.size === 0) return;
     const params = new URLSearchParams(window.location.search);
