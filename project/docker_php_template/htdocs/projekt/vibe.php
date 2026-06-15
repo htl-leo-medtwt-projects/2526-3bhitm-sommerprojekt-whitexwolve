@@ -3,6 +3,7 @@ session_start();
 require_once __DIR__ . '/data/db.php';
 require_once __DIR__ . '/data/functions.php';
 
+// Ausgabe gegen XSS absichern
 function esc($value): string
 {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
@@ -25,6 +26,7 @@ $show   = $showId ? getShowById($conn, $showId) : null;
 </head>
 <body>
 
+<!-- kein site-header.php include hier — vibe-page hat eigenes minimales Layout -->
 <main class="vibe-page">
     <div class="seitenbreite">
 
@@ -46,6 +48,7 @@ $show   = $showId ? getShowById($conn, $showId) : null;
 
             <div class="vibe-layout">
 
+                <!-- Formular sendet per GET zu seat.php — alle Felder landen in der URL -->
                 <form class="vibe-formular" action="seat.php" method="get">
                     <input type="hidden" name="show" value="<?= esc((string)$showId) ?>">
 
@@ -54,6 +57,7 @@ $show   = $showId ? getShowById($conn, $showId) : null;
                         Sag uns, was dir wichtig ist – wir zeigen dir die besten Plätze.
                     </p>
 
+                    <!-- Personen-Anzahl: readonly input, Wert per JS über +/− Buttons gesteuert -->
                     <div class="vibe-gruppe">
                         <label class="vibe-label" for="personen">Wie viele Personen?</label>
                         <div class="vibe-anzahl">
@@ -63,6 +67,7 @@ $show   = $showId ? getShowById($conn, $showId) : null;
                         </div>
                     </div>
 
+                    <!-- Vibes: Mehrfachauswahl möglich — name="vibe[]" ergibt Array in seat.php -->
                     <div class="vibe-gruppe">
                         <span class="vibe-label">Was ist dir wichtig?</span>
                         <div class="vibe-optionen">
@@ -106,6 +111,7 @@ $show   = $showId ? getShowById($conn, $showId) : null;
                         </div>
                     </div>
 
+                    <!-- Modus: 'empfehlung' = seat.php schlägt Gruppe vor, 'selbst' = User klickt frei -->
                     <div class="vibe-gruppe">
                         <span class="vibe-label">Wie möchtest du wählen?</span>
                         <div class="vibe-modus">
@@ -149,6 +155,7 @@ $show   = $showId ? getShowById($conn, $showId) : null;
 
         <?php else: ?>
 
+            <!-- Fallback wenn show_id fehlt oder ungültig -->
             <section class="seat-box">
                 <h1>Vorstellung nicht gefunden</h1>
                 <p>Diese Vorstellung konnte nicht geladen werden.</p>

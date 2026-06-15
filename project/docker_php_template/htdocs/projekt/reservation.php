@@ -3,17 +3,20 @@ session_start();
 require_once __DIR__ . '/data/db.php';
 require_once __DIR__ . '/data/functions.php';
 
+// Ausgabe gegen XSS absichern
 function esc($value): string {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+// Parameter kommen per GET (von seat.php) und per POST (nach Formular-Submit)
 $showId   = (int)($_GET['show'] ?? $_POST['show'] ?? 0);
 $seatsRaw = trim((string)($_GET['seats'] ?? $_POST['seats'] ?? ''));
 $personen = max(1, (int)($_GET['personen'] ?? $_POST['personen'] ?? 1));
 
+// Sitzplatz-String "A1, A2, A3" in sauberes Array umwandeln
 $seatList = array_values(array_filter(array_map('trim', explode(',', $seatsRaw))));
 $show     = $showId ? getShowById($conn, $showId) : null;
-$event    = $show;
+$event    = $show; // getShowById liefert per JOIN bereits alle Event-Felder
 
 $hallName     = $show['hall'] ?? 'VibeSeat Arena';
 $showDisplay  = $show
@@ -23,7 +26,7 @@ $eventTitle   = $show['title'] ?? '';
 $pricePerSeat = (float)($show['ticket_price'] ?? 0);
 $totalPrice   = $pricePerSeat * count($seatList);
 
-// E-Mail + Name aus Session vorausfüllen wenn eingeloggt
+// E-Mail aus Session übernehmen damit eingeloggte User sie nicht nochmal eingeben müssen
 $loggedIn = isset($_SESSION['user_id']);
 $vorname  = '';
 $nachname = '';
@@ -43,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $vorname  = trim($_POST['vorname'] ?? '');
     $nachname = trim($_POST['nachname'] ?? '');
 
+    // E-Mail nur aus POST lesen wenn nicht eingeloggt
     if (!$loggedIn) {
         $email = trim($_POST['email'] ?? '');
     }
@@ -56,7 +60,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Die E-Mail-Adresse ist ungültig.';
     }
 
-    // Doppelt-Belegungs-Check
+    // prüfen ob einer der gewählten Sitze inzwischen von jemand anderem reserviert wurde
+    // (Logik in Kooperation mit KI entwickelt)
     if (empty($errors) && $showId) {
         $bereitsBelegt = [];
         $stmt = $conn->prepare(
@@ -83,6 +88,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $seatsString = implode(', ', $seatList);
         $status      = 'aktiv';
 
+        // zwei verschiedene INSERTs: eingeloggte User bekommen user_id gespeichert, Gäste nicht
         if ($loggedIn) {
             $userId = (int)$_SESSION['user_id'];
             $stmt = $conn->prepare("
@@ -212,6 +218,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <?php endif; ?>
 
                     <form method="POST" action="reservation.php">
+                        <!-- show, seats, personen als hidden damit sie beim POST nicht verloren gehen -->
                         <input type="hidden" name="show"     value="<?= esc((string)$showId) ?>">
                         <input type="hidden" name="seats"    value="<?= esc($seatsRaw) ?>">
                         <input type="hidden" name="personen" value="<?= esc((string)$personen) ?>">
@@ -229,6 +236,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         </div>
 
                         <?php if ($loggedIn): ?>
+                            <!-- eingeloggte User: E-Mail still mitsenden, kein sichtbares Feld -->
                             <input type="hidden" name="email" value="<?= esc($email) ?>">
                         <?php else: ?>
                             <div class="feld">

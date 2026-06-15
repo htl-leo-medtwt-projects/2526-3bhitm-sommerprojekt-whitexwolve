@@ -1,4 +1,4 @@
-const seatBox     = document.querySelector('.seat-box');
+const seatBox      = document.querySelector('.seat-box');
 const pricePerSeat = parseFloat(seatBox?.dataset.price ?? 0);
 
 const seats       = document.querySelectorAll('.seat--free');
@@ -7,23 +7,26 @@ const seatPreis   = document.getElementById('seatPreis');
 const seatListe   = document.getElementById('seatListe');
 const reservieren = document.getElementById('reservierenButton');
 
+// Set statt Array damit doppeltes Hinzufügen automatisch ignoriert wird
 const ausgewaehlt = new Set();
 
-// Empfehlung automatisch vorauswählen
+// EMPFEHLUNG kommt als globale Variable aus seat.php (via <script> vor diesem File)
+// wenn Modus = "empfehlung", werden die besten Sitze direkt vorausgewählt
 if (typeof EMPFEHLUNG !== 'undefined' && EMPFEHLUNG.length > 0) {
     EMPFEHLUNG.forEach((id) => {
         ausgewaehlt.add(id);
         const btn = document.querySelector(`.seat[data-seat="${id}"]`);
-        if (btn) {
-            btn.classList.add('seat--selected');
-        }
+        if (btn) btn.classList.add('seat--selected');
     });
 }
 
+// Dezimalkomma statt Punkt für Preisanzeige
 function formatPreis(wert) {
     return wert.toFixed(2).replace('.', ',');
 }
 
+// Sidebar aktualisieren: Anzahl, Preis, Liste, Button-Status
+// (Logik in Kooperation mit KI entwickelt)
 function updateAnzeige() {
     seatAnzahl.textContent = ausgewaehlt.size;
     seatPreis.textContent  = formatPreis(ausgewaehlt.size * pricePerSeat);
@@ -45,6 +48,7 @@ function updateAnzeige() {
         });
     }
 
+    // PERSONEN kommt ebenfalls aus seat.php — gibt an wie viele Sitze gewählt werden sollen
     const ziel = typeof PERSONEN !== 'undefined' ? PERSONEN : 1;
     reservieren.disabled = ausgewaehlt.size === 0;
 
@@ -57,7 +61,7 @@ function updateAnzeige() {
     }
 }
 
-// Klick auf freien Sitz
+// Toggle: nochmal klicken hebt die Auswahl wieder auf
 seats.forEach((btn) => {
     btn.addEventListener('click', () => {
         const id = btn.dataset.seat;
@@ -72,7 +76,8 @@ seats.forEach((btn) => {
     });
 });
 
-// Zur Reservierung weiterleiten — "sitze" → "seats" damit reservation.php es liest
+// alle aktuellen URL-Parameter übernehmen (show, personen, modus …)
+// und die gewählten Sitze als "seats" anhängen
 reservieren.addEventListener('click', () => {
     if (ausgewaehlt.size === 0) return;
     const params = new URLSearchParams(window.location.search);
@@ -80,5 +85,5 @@ reservieren.addEventListener('click', () => {
     window.location.href = 'reservation.php?' + params.toString();
 });
 
-// Initiale Anzeige
+// einmal beim Laden aufrufen damit Sidebar den richtigen Startzustand hat
 updateAnzeige();

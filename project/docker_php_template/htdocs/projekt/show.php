@@ -3,13 +3,14 @@ session_start();
 require_once __DIR__ . '/data/db.php';
 require_once __DIR__ . '/data/functions.php';
 
+// Ausgabe gegen XSS absichern
 function esc($value): string {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
 
 $showId = (int)($_GET['show'] ?? 0);
 $show   = $showId ? getShowById($conn, $showId) : null;
-$event  = $show; // show enthält bereits title, description, category vom JOIN
+$event  = $show; // getShowById liefert per JOIN bereits title, description, category
 ?>
 <!DOCTYPE html>
 <html lang="de">
@@ -70,6 +71,7 @@ $event  = $show; // show enthält bereits title, description, category vom JOIN
                     <a class="schaltflaeche schaltflaeche--sekundaer" href="index.php">
                         Zurück
                     </a>
+                    <!-- weiter zu vibe.php wo Anzahl Personen + Vibe-Präferenzen gewählt werden -->
                     <a class="schaltflaeche schaltflaeche--primaer" href="vibe.php?show=<?= urlencode((string)$showId) ?>">
                         Sitzplätze auswählen →
                     </a>
@@ -79,6 +81,7 @@ $event  = $show; // show enthält bereits title, description, category vom JOIN
 
         <?php else: ?>
 
+            <!-- Fallback wenn show_id fehlt oder nicht in DB vorhanden -->
             <div class="show-box">
                 <h1>Vorstellung nicht gefunden</h1>
                 <p class="show-box__beschreibung">Diese Vorstellung konnte nicht geladen werden.</p>

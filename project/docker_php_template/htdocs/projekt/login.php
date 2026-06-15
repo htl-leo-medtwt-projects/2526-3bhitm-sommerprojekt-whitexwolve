@@ -2,10 +2,12 @@
 session_start();
 require_once __DIR__ . '/data/db.php';
 
+// Ausgabe absichern gegen XSS
 function esc($value): string {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+// bereits eingeloggte User direkt weiterleiten
 if (isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;
@@ -22,6 +24,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($password === '') $errors[] = 'Bitte gib dein Passwort ein.';
 
     if (empty($errors)) {
+        // Prepared Statement verhindert SQL-Injection
         $stmt = $conn->prepare('SELECT id, username, email, password_hash FROM users WHERE username = ?');
         $stmt->bind_param('s', $username);
         $stmt->execute();
@@ -30,12 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $stmt->close();
 
         if ($user && password_verify($password, $user['password_hash'])) {
+            // Login erfolgreich: relevante Daten in Session speichern
             $_SESSION['user_id']       = $user['id'];
             $_SESSION['user_username'] = $user['username'];
             $_SESSION['user_email']    = $user['email'];
             header('Location: index.php');
             exit;
         } else {
+            // absichtlich kein Hinweis ob Username oder Passwort falsch war lol
             $errors[] = 'Benutzername oder Passwort falsch.';
         }
     }
@@ -81,7 +86,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <form method="POST" action="login.php">
             <div class="auth-feld">
                 <label class="auth-label" for="username">Benutzername</label>
-                <input class="auth-input" type="text" id="username" name="username" value="<?= esc($username) ?>" placeholder="max_mustermann" required>
+                <input class="auth-input" type="text" id="username" name="username"
+                       value="<?= esc($username) ?>" placeholder="max_mustermann" required>
             </div>
             <div class="auth-feld">
                 <label class="auth-label" for="password">Passwort</label>

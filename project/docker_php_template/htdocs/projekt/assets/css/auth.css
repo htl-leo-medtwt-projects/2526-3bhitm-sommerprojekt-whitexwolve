@@ -21,7 +21,7 @@
 .auth-titel {
     font-family: "Barlow Condensed", sans-serif;
     text-transform: uppercase;
-    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-size: clamp(2rem, 4vw, 2.8rem); /* fluid sizing damit's auf mobil nicht zu groß wird */
     line-height: .9;
     letter-spacing: -.03em;
     margin-bottom: .5rem;
@@ -38,6 +38,7 @@
     font-weight: 700;
 }
 
+/* einzelnes Formularfeld mit Label + Input */
 .auth-feld {
     display: flex;
     flex-direction: column;
@@ -53,6 +54,7 @@
     color: var(--muted);
 }
 
+/* wird z.B. für Passwort-Hinweise unter dem Label verwendet */
 .auth-hinweis {
     font-weight: 400;
     text-transform: none;
@@ -81,6 +83,7 @@
     margin-top: .5rem;
 }
 
+/* Fehlermeldung bei falschen Eingaben */
 .auth-fehler {
     background: rgba(200,50,50,.08);
     border: 1px solid rgba(200,50,50,.2);
@@ -93,6 +96,7 @@
 
 .auth-fehler p { margin: 0; }
 
+/* Erfolgsmeldung nach z.B. Registrierung */
 .auth-erfolg {
     background: rgba(50,150,80,.1);
     border: 1px solid rgba(50,150,80,.25);
@@ -106,6 +110,7 @@
 
 .auth-erfolg a { color: inherit; text-decoration: underline; }
 
+
 /* ── Kleine Schaltfläche für Nav ────────────────────────────────── */
 
 .schaltflaeche--klein {
@@ -114,6 +119,7 @@
     font-size: .88rem;
     border-radius: 10px;
 }
+
 
 /* ── Nav Avatar ─────────────────────────────────────────────────── */
 
@@ -127,12 +133,14 @@
     border: 2px solid rgba(102,91,77,.2);
 }
 
+
 /* ── Profilseite ─────────────────────────────────────────────────── */
 
 .profil-seite {
     padding: 2.5rem 0 4rem;
 }
 
+/* sidebar links, reservierungen rechts */
 .profil-layout {
     display: grid;
     grid-template-columns: 300px 1fr;
@@ -149,7 +157,7 @@
     display: flex;
     flex-direction: column;
     gap: .5rem;
-    position: sticky;
+    position: sticky; /* bleibt beim Scrollen sichtbar */
     top: 100px;
 }
 
@@ -167,6 +175,7 @@
     border: 3px solid rgba(102,91,77,.2);
 }
 
+/* Fallback wenn kein Bild hochgeladen wurde — zeigt Initiale */
 .profil-avatar--platzhalter {
     display: flex;
     align-items: center;
@@ -230,6 +239,7 @@
     box-shadow: var(--shadow);
 }
 
+/* Titel links, Preis rechts — baseline-Ausrichtung damit's sauber fluchtet */
 .reservierungs-karte__kopf {
     display: flex;
     justify-content: space-between;
@@ -249,7 +259,7 @@
 .reservierungs-karte__preis {
     font-weight: 800;
     font-size: 1.1rem;
-    white-space: nowrap;
+    white-space: nowrap; /* verhindert Zeilenumbruch bei langen Preisen */
 }
 
 .reservierungs-karte__info {
@@ -265,6 +275,7 @@
     opacity: .7;
 }
 
+/* ab 920px wird's eine Spalte, profil-karte klebt nicht mehr */
 @media (max-width: 920px) {
     .profil-layout {
         grid-template-columns: 1fr;

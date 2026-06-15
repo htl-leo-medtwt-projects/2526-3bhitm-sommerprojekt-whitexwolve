@@ -2,10 +2,12 @@
 session_start();
 require_once __DIR__ . '/data/db.php';
 
+// Ausgabe gegen XSS absichern
 function esc($value): string {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
+// bereits eingeloggte User direkt weiterleiten
 if (isset($_SESSION['user_id'])) {
     header('Location: index.php');
     exit;
@@ -22,11 +24,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $password = trim($_POST['password']);
 
     if ($username === '') $errors[] = 'Bitte gib einen Benutzernamen ein.';
+
     if ($email === '') {
         $errors[] = 'Bitte gib eine E-Mail-Adresse ein.';
     } elseif (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
         $errors[] = 'Die E-Mail-Adresse ist ungültig.';
     }
+
     if ($password === '') {
         $errors[] = 'Bitte gib ein Passwort ein.';
     } elseif (strlen($password) < 6) {
@@ -34,12 +38,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (empty($errors)) {
+        // password_hash() mit PASSWORD_DEFAULT — nie Klartext in die DB
         $passwordHash = password_hash($password, PASSWORD_DEFAULT);
+
         $stmt = $conn->prepare('INSERT INTO users (username, email, password_hash) VALUES (?, ?, ?)');
         $stmt->bind_param('sss', $username, $email, $passwordHash);
+
         if ($stmt->execute()) {
             $success = true;
         } else {
+            // execute() schlägt fehl wenn username oder email bereits existiert (UNIQUE constraint)
             $errors[] = 'Benutzername oder E-Mail bereits vergeben.';
         }
         $stmt->close();
@@ -76,6 +84,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <p class="auth-untertitel">Bereits registriert? <a href="login.php">Einloggen</a></p>
 
         <?php if ($success): ?>
+            <!-- Formular ausblenden nach erfolgreicher Registrierung -->
             <div class="auth-erfolg">
                 Registrierung erfolgreich! <a href="login.php">Jetzt einloggen →</a>
             </div>
@@ -92,13 +101,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             <form method="POST" action="register.php">
                 <div class="auth-feld">
                     <label class="auth-label" for="username">Benutzername</label>
-                    <input class="auth-input" type="text" id="username" name="username" value="<?= esc($username) ?>" placeholder="max_mustermann" required>
+                    <input class="auth-input" type="text" id="username" name="username"
+                           value="<?= esc($username) ?>" placeholder="max_mustermann" required>
                 </div>
                 <div class="auth-feld">
                     <label class="auth-label" for="email">E-Mail</label>
-                    <input class="auth-input" type="email" id="email" name="email" value="<?= esc($email) ?>" placeholder="max@beispiel.at" required>
+                    <input class="auth-input" type="email" id="email" name="email"
+                           value="<?= esc($email) ?>" placeholder="max@beispiel.at" required>
                 </div>
                 <div class="auth-feld">
+                    <!-- auth-hinweis für den Mindestlängen-Hinweis neben dem Label -->
                     <label class="auth-label" for="password">Passwort <span class="auth-hinweis">(min. 6 Zeichen)</span></label>
                     <input class="auth-input" type="password" id="password" name="password" required>
                 </div>

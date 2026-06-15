@@ -18,6 +18,7 @@
     color: var(--color-text, #28251d);
 }
 
+/* zentrierte Box mit max-width — nicht full-width weil's nur Infos sind */
 .show-box {
     max-width: 700px;
     margin: 0 auto;
@@ -28,6 +29,7 @@
     box-shadow: 0 4px 24px oklch(0.2 0.01 80 / 0.07);
 }
 
+/* Kategorie-Badge (z.B. "Theater", "Konzert") */
 .show-box__kategorie {
     display: inline-block;
     font-size: 0.7rem;
@@ -62,6 +64,7 @@
     margin: 1.25rem 0;
 }
 
+/* Metadaten (Datum, Uhrzeit, Saal, Preis) im 2-Spalten-Raster */
 .show-box__meta {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -95,6 +98,7 @@
     flex-wrap: wrap;
 }
 
+/* mobil: Meta einspalties, Buttons volle Breite */
 @media (max-width: 480px) {
     .show-box__meta {
         grid-template-columns: 1fr;

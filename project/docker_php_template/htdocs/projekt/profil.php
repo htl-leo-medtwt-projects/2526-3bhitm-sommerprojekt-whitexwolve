@@ -2,6 +2,8 @@
 session_start();
 require_once __DIR__ . '/data/db.php';
 
+// Reservierung stornieren — läuft vor dem Session-Check damit kein doppelter POST-Block entsteht
+// AND user_id = ? stellt sicher dass man nur eigene Reservierungen löschen kann
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id']) && !isset($_FILES['profilbild'])) {
     $deleteId = (int)$_POST['delete_id'];
     $stmt = $conn->prepare('DELETE FROM reservierungen WHERE id = ? AND user_id = ?');
@@ -12,21 +14,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['delete_id']) && !isse
     exit;
 }
 
+// Ausgabe gegen XSS absichern
 function esc($value): string {
     return htmlspecialchars((string) $value, ENT_QUOTES, 'UTF-8');
 }
 
-// Nur eingeloggte User dürfen diese Seite sehen
+// nicht eingeloggte User rausschmeißen
 if (!isset($_SESSION['user_id'])) {
     header('Location: login.php');
     exit;
 }
 
-$userId   = $_SESSION['user_id'];
-$errors   = [];
-$success  = '';
+$userId  = $_SESSION['user_id'];
+$errors  = [];
+$success = '';
 
 // Profilbild hochladen
+// (Upload-Logik in Kooperation mit KI entwickelt)
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profilbild'])) {
 
     $file     = $_FILES['profilbild'];
@@ -40,7 +44,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profilbild'])) {
     } elseif ($file['size'] > $maxSize) {
         $errors[] = 'Die Datei darf maximal 2 MB groß sein.';
     } else {
-        // Dateiname sicher machen: user_ID.erweiterung
+        // Dateiname nach Schema user_ID.ext — verhindert Überschreiben fremder Bilder
         $extension  = pathinfo($file['name'], PATHINFO_EXTENSION);
         $dateiname  = 'user_' . $userId . '.' . $extension;
         $zielordner = __DIR__ . '/uploads/';
@@ -59,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profilbild'])) {
             $stmt->execute();
             $stmt->close();
 
-            // Session aktualisieren
+            // Session sofort aktualisieren damit Avatar im Header direkt erscheint
             $_SESSION['user_profilbild'] = $pfadInDb;
             $success = 'Profilbild erfolgreich gespeichert!';
         } else {
@@ -68,20 +72,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['profilbild'])) {
     }
 }
 
-// Aktuelle Userdaten aus DB holen
+// Aktuelle Userdaten holen
 $stmt = $conn->prepare('SELECT username, email, profilbild, created_at FROM users WHERE id = ?');
 $stmt->bind_param('i', $userId);
 $stmt->execute();
-$result = $stmt->get_result();
-$user   = $result->fetch_assoc();
+$user = $stmt->get_result()->fetch_assoc();
 $stmt->close();
 
-// Reservierungen des Users holen
-$stmt = $conn->prepare('SELECT id, event_title, show_display, seats, total_price, created_at FROM reservierungen WHERE user_id = ? ORDER BY created_at DESC');
+// Reservierungen des Users, neueste zuerst
+$stmt = $conn->prepare(
+    'SELECT id, event_title, show_display, seats, total_price, created_at
+     FROM reservierungen
+     WHERE user_id = ?
+     ORDER BY created_at DESC'
+);
 $stmt->bind_param('i', $userId);
 $stmt->execute();
-$result       = $stmt->get_result();
-$reservations = $result->fetch_all(MYSQLI_ASSOC);
+$reservations = $stmt->get_result()->fetch_all(MYSQLI_ASSOC);
 $stmt->close();
 ?>
 <!DOCTYPE html>
@@ -114,7 +121,6 @@ $stmt->close();
 </header>
 
 <main class="seitenbreite profil-seite">
-
     <div class="profil-layout">
 
         <!-- Linke Spalte: Profilkarte -->
@@ -124,6 +130,7 @@ $stmt->close();
                 <?php if (!empty($user['profilbild'])): ?>
                     <img class="profil-avatar" src="<?= esc($user['profilbild']) ?>" alt="Profilbild">
                 <?php else: ?>
+                    <!-- kein Bild vorhanden: ersten Buchstaben des Usernamens anzeigen -->
                     <div class="profil-avatar profil-avatar--platzhalter">
                         <?= strtoupper(substr($user['username'], 0, 1)) ?>
                     </div>
@@ -134,7 +141,7 @@ $stmt->close();
             <p class="profil-email"><?= esc($user['email']) ?></p>
             <p class="profil-seit">Dabei seit <?= date('M Y', strtotime($user['created_at'])) ?></p>
 
-            <!-- Profilbild hochladen -->
+            <!-- Profilbild hochladen — enctype nötig für Datei-Upload -->
             <form method="POST" action="profil.php" enctype="multipart/form-data" class="profil-upload-form">
 
                 <?php if (!empty($success)): ?>
@@ -150,7 +157,8 @@ $stmt->close();
                 <?php endif; ?>
 
                 <label class="auth-label" for="profilbild">Profilbild ändern</label>
-                <input class="profil-file-input" type="file" id="profilbild" name="profilbild" accept="image/jpeg,image/png,image/webp">
+                <input class="profil-file-input" type="file" id="profilbild" name="profilbild"
+                       accept="image/jpeg,image/png,image/webp">
                 <button class="schaltflaeche schaltflaeche--sekundaer schaltflaeche--klein" type="submit">Hochladen</button>
             </form>
 
@@ -177,6 +185,8 @@ $stmt->close();
                             <p class="reservierungs-karte__info">📅 <?= esc($res['show_display']) ?></p>
                             <p class="reservierungs-karte__info">🎟️ <?= esc($res['seats']) ?></p>
                             <p class="reservierungs-karte__datum"><?= date('d.m.Y H:i', strtotime($res['created_at'])) ?> Uhr</p>
+
+                            <!-- eigene Form pro Karte damit delete_id klar zugeordnet ist -->
                             <form method="POST" action="profil.php">
                                 <input type="hidden" name="delete_id" value="<?= (int)$res['id'] ?>">
                                 <button type="submit" class="schaltflaeche schaltflaeche--sekundaer">
@@ -190,7 +200,6 @@ $stmt->close();
         </section>
 
     </div>
-
 </main>
 
 <footer class="seitenfuss">

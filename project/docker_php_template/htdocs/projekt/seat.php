@@ -3,6 +3,7 @@ session_start();
 require_once __DIR__ . '/data/db.php';
 require_once __DIR__ . '/data/functions.php';
 
+// Ausgabe gegen XSS absichern
 function esc($value): string {
     return htmlspecialchars((string)$value, ENT_QUOTES, 'UTF-8');
 }
@@ -10,10 +11,13 @@ function esc($value): string {
 // ─── Parameter aus URL ────────────────────────────────────────────────────────
 $showId   = (int)($_GET['show']     ?? 0);
 $personen = max(1, (int)($_GET['personen'] ?? 1));
+// modus: 'empfehlung' = beste Sitze automatisch vorschlagen, 'selbst' = User wählt frei
 $modus    = in_array($_GET['modus'] ?? '', ['empfehlung', 'selbst']) ? $_GET['modus'] : 'selbst';
 $vibes    = isset($_GET['vibe']) ? (array)$_GET['vibe'] : [];
 
+
 // ─── Belegte Sitze aus DB laden ───────────────────────────────────────────────
+// stornierte Reservierungen werden ignoriert
 $taken = [];
 if ($showId) {
     $stmt = $conn->prepare(
@@ -31,11 +35,14 @@ if ($showId) {
     $stmt->close();
 }
 
+
 // ─── Show + Event laden ───────────────────────────────────────────────────────
 $show  = $showId ? getShowById($conn, $showId) : null;
-$event = $show;  // getShowById liefert bereits alle Event-Felder per JOIN
+$event = $show; // getShowById liefert per JOIN bereits alle Event-Felder
+
 
 // ─── Saal-Layout dynamisch aus DB aufbauen ────────────────────────────────────
+// Reihen A–X, Spalten 1–N — Werte kommen aus saele.anzahl_reihen / anzahl_spalten
 $seats = [];
 if ($show) {
     $rows    = (int)($show['anzahl_reihen']  ?? 8);
@@ -44,8 +51,8 @@ if ($show) {
 
     foreach ($letters as $rowIndex => $rowLetter) {
         for ($col = 1; $col <= $cols; $col++) {
-            $seatId   = $rowLetter . $col;
-            $isAisle  = ($col === 1 || $col === $cols);
+            $seatId  = $rowLetter . $col;
+            $isAisle = ($col === 1 || $col === $cols); // äußerste Spalten = Gangplätze
             $exitDist = min(10, max(1, (int)round(
                 (abs($col - 1) + abs($rowIndex)) / max(1, $rows + $cols) * 9 + 1
             )));
@@ -63,7 +70,10 @@ if ($show) {
     }
 }
 
+
 // ─── Score-Algorithmus ────────────────────────────────────────────────────────
+// berechnet einen Wert 0–100 pro Sitz basierend auf den gewählten Vibes
+// (Logik in Kooperation mit KI entwickelt)
 function scoreForSeat(array $seat, array $vibes): int {
     if (empty($vibes)) return 50;
     $scores = [];
@@ -73,17 +83,21 @@ function scoreForSeat(array $seat, array $vibes): int {
         $colDist  = $colMid > 0 ? abs($seat['col'] - $colMid) / $colMid : 0;
         switch ($vibe) {
             case 'ruhig':
+                // Mitte + hinten bevorzugt, Gangplätze vermeiden
                 $scores[] = min(100, ($seat['is_aisle'] ? 0 : 30) + (int)((1 - $colDist) * 50) + (int)($rowRatio * 20));
                 break;
             case 'mittendrin':
+                // Mitte der Reihe + mittlere Reihen
                 $rowMidDist = abs($rowRatio - 0.5) * 2;
                 $scores[] = (int)((1 - $colDist) * 50) + (int)((1 - $rowMidDist) * 50);
                 break;
             case 'beste_sicht':
+                // Sweet-Spot: nicht zu weit vorne, nicht zu weit hinten — und zentral
                 $sweetSpot = abs($rowRatio - 0.5);
                 $scores[] = max(0, (int)((1 - $sweetSpot * 2) * 60)) + (int)((1 - $colDist) * 40);
                 break;
             case 'schnell_raus':
+                // niedrige exit_distance = nah am Ausgang = hoher Score
                 $scores[] = (int)((1 - ($seat['exit_distance'] - 1) / 9) * 100);
                 break;
         }
@@ -97,9 +111,11 @@ foreach ($seats as &$seat) {
     $seat['tier']     = $seat['score'] >= 70 ? 'top' : ($seat['score'] >= 40 ? 'ok' : 'low');
     $seat['is_taken'] = in_array($seat['id'], $taken);
 }
-unset($seat);
+unset($seat); // Referenz aus foreach entfernen
+
 
 // ─── Empfehlung berechnen ─────────────────────────────────────────────────────
+// sucht die zusammenhängende Gruppe freier Sitze mit dem höchsten Durchschnits-Score
 $empfehlung = [];
 if ($modus === 'empfehlung') {
     $freeSeats = array_filter($seats, fn($s) => !$s['is_taken']);
@@ -114,6 +130,7 @@ if ($modus === 'empfehlung') {
         for ($i = 0; $i <= $count - $personen; $i++) {
             $group = array_slice($rowSeats, $i, $personen);
             $cols  = array_column($group, 'col');
+            // nur lückenlose Blöcke gelten als Gruppe
             if (max($cols) - min($cols) !== $personen - 1) continue;
             $groupScore = (int)(array_sum(array_column($group, 'score')) / $personen);
             if ($groupScore > $bestScore) {
@@ -125,7 +142,8 @@ if ($modus === 'empfehlung') {
     $empfehlung = $bestGroup;
 }
 
-// ─── Sitze nach Reihe gruppieren ─────────────────────────────────────────────
+
+// ─── Sitze nach Reihe gruppieren für HTML-Ausgabe ────────────────────────────
 $seatsByRow = [];
 foreach ($seats as $s) $seatsByRow[$s['row']][] = $s;
 
@@ -165,7 +183,7 @@ $showDisplay  = $show
 
             <div class="seat-layout">
 
-                <!-- Saalplan -->
+                <!-- Saalplan — data-* Attribute werden von seat.js gelesen -->
                 <section
                     class="seat-box"
                     data-price="<?= esc((string)$pricePerSeat) ?>"
@@ -197,6 +215,7 @@ $showDisplay  = $show
                                             $classes[] = 'seat--free';
                                             $classes[] = 'seat--' . $seat['tier'];
                                         }
+                                        // empfohlene Sitze bekommen Glow-Ring (via seat.css)
                                         if (in_array($seat['id'], $empfehlung)) {
                                             $classes[] = 'seat--empfohlen';
                                         }
@@ -265,6 +284,7 @@ $showDisplay  = $show
 
 <?php require_once __DIR__ . '/partials/site-footer.php'; ?>
 
+<!-- globale JS-Variablen für seat.js — müssen vor dem Script-Tag stehen -->
 <script>
     const EVENT_TITEL = <?= json_encode($event['title'] ?? '') ?>;
     const SHOW_ZEIT   = <?= json_encode($showDisplay) ?>;
